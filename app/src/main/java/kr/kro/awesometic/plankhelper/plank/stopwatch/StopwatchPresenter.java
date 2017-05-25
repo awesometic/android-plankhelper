@@ -162,7 +162,7 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
         int lapCount = mLapTimeListViewAdapter.getCount();
 
         PlankLog plankLog = new PlankLog(
-                TimeUtils.getCurrentDateFormatted(),
+                TimeUtils.getCurrentDatetimeFormatted(),
                 TimeUtils.timeFormatToMSec(mStopwatchView.getTimeString()),
                 Constants.DATABASE.METHOD_STOPWATCH,
                 lapCount,

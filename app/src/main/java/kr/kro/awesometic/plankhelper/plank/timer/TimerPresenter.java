@@ -174,7 +174,7 @@ public class TimerPresenter implements  TimerContract.Presenter {
         int lapCount = mLapTimeListViewAdapter.getCount();
 
         PlankLog plankLog = new PlankLog(
-                TimeUtils.getCurrentDateFormatted(),
+                TimeUtils.getCurrentDatetimeFormatted(),
                 mPlankService.getTimerStartTimeMSec(),
                 Constants.DATABASE.METHOD_TIMER,
                 lapCount,
