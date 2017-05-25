@@ -15,6 +15,13 @@ public class TimeUtils {
     public static int PARSE_ERROR = -1;
 
     public static String getCurrentDateFormatted() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+
+        return simpleDateFormat.format(new Date());
+    }
+
+    public static String getCurrentDatetimeFormatted() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
 
