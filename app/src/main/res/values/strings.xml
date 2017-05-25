@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">플랭크 헬퍼</string>
+
+    <string name="navigation_view_header_title">플랭크 헬퍼</string>
+    <string name="plank_title">플랭크</string>
+    <string name="statistics_title">통계</string>
+    <string name="settings_title">설정</string>
+    <string name="back_button_notice">앱이 종료되지 않았습니다.\n알림을 통해 종료하세요.</string>
+
+    <string name="notification_ready_title">플랭크 헬퍼가 준비됐습니다!</string>
+    <string name="notification_ready_text">스탑워치나 타이머를 시작하세요.</string>
+    <string name="notification_go_to_ready">뒤로</string>
+    <string name="notification_timer_task_ongoing">진행 중일 땐 뒤로갈 수 없습니다.</string>
+    <string name="notification_stopwatch">스탑워치</string>
+    <string name="notification_timer">타이머</string>
+    <string name="notification_app_exit">종료</string>
+    <string name="notification_stopwatch_start">시작</string>
+    <string name="notification_timer_set">설정</string>
+    <string name="notification_timer_start">시작</string>
+    <string name="notification_timer_cancel">취소</string>
+    <string name="notification_pause">중지</string>
+    <string name="notification_resume">계속</string>
+    <string name="notification_lap">기록</string>
+    <string name="notification_reset">초기화</string>
+
+    <string name="plank_stopwatch_title">스탑워치</string>
+    <string name="plank_stopwatch_on">시작</string>
+    <string name="plank_stopwatch_pause">중지</string>
+    <string name="plank_stopwatch_resume">계속</string>
+    <string name="plank_stopwatch_off">종료</string>
+    <string name="plank_stopwatch_lap">기록</string>
+    <string name="plank_stopwatch_reset">초기화</string>
+    <string name="plank_stopwatch_notification_title_ready">플랭크 - 스탑워치 준비</string>
+    <string name="plank_stopwatch_notification_title_ongoing">플랭크 - 스탑워치 진행 중</string>
+
+    <string name="plank_timer_title">타이머</string>
+    <string name="plank_timer_on">시작</string>
+    <string name="plank_timer_pause">중지</string>
+    <string name="plank_timer_resume">계속</string>
+    <string name="plank_timer_off">종료</string>
+    <string name="plank_timer_lap">기록</string>
+    <string name="plank_timer_reset">초기화</string>
+    <string name="plank_timer_notification_title_ready">플랭크 - 타이머 준비</string>
+    <string name="plank_timer_notification_title_ongoing">플랭크 - 타이머 진행 중</string>
+
+    <string name="statistics_calendar_title">달력</string>
+    <string name="statistics_chart_title">차트</string>
+    <string name="statistics_log_title">기록</string>
+    <string name="statistics_no_data">플랭크 기록이 없습니다.</string>
+</resources>
