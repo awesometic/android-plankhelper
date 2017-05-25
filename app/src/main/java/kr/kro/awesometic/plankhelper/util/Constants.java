@@ -75,6 +75,11 @@ public class Constants {
         int STOPWATCH_FREQUENCY_IN_MILLISECOND = 100;
     }
 
+    public interface RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE {
+        int TYPE_HEADER =  0;
+        int TYPE_BODY = 1;
+    }
+
     public interface DATABASE {
         String EMPTY_PARENT_ID = "empty_parent_id";
 

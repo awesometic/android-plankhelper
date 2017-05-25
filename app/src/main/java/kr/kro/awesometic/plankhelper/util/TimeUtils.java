@@ -2,7 +2,10 @@ package kr.kro.awesometic.plankhelper.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -53,5 +56,31 @@ public class TimeUtils {
         long hour = (mSec / (1000 * 60 * 60)) % 24;
 
         return String.format(Locale.getDefault(), "%02d:%02d:%02d.%03d", hour, minute, second, mSec % 1000);
+    }
+
+    public static List<Integer> getDaysOfCurrentWeek() {
+        List<Integer> resultDays = new ArrayList<Integer>();
+
+        String currentDate = getCurrentDateFormatted();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd", Locale.getDefault());
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(currentDate);
+        } catch (ParseException _e){
+            _e.printStackTrace();
+        }
+
+        Calendar cal = Calendar.getInstance(Locale.getDefault());
+        cal.setTime(date);
+        cal.add(Calendar.DATE, 1 - cal.get(Calendar.DAY_OF_WEEK));
+
+        for (int i = 0; i <= 7; i++) {
+            if (i == 0)
+                resultDays.add(Integer.parseInt(simpleDateFormat.format(cal.getTime())));
+            else
+                resultDays.add(resultDays.get(i - 1) + 1);
+        }
+
+        return resultDays;
     }
 }
