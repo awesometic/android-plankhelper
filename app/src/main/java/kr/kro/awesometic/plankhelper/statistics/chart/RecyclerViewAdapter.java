@@ -148,14 +148,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 data.setAxisYLeft(axisY);
                 holder.mLineChartView.setLineChartData(data);
 
-                //set chart data to initialize viewport, otherwise it will be[0,0;0,0]
-                //get initialized viewport and change if ranges according to your needs.
                 final Viewport viewport = new Viewport(holder.mLineChartView.getMaximumViewport());
-                viewport.top = (maxPlankDuration > lineChartUnitOfAxisY) ? maxPlankDuration : lineChartUnitOfAxisY; //example max value
-                viewport.bottom = 0;  //example min value
+                viewport.top = (maxPlankDuration > lineChartUnitOfAxisY) ? maxPlankDuration : lineChartUnitOfAxisY;
+                viewport.bottom = 0;
                 holder.mLineChartView.setMaximumViewport(viewport);
                 holder.mLineChartView.setCurrentViewport(viewport);
-                //Optional step: disable viewport recalculations, thanks to this animations will not change viewport automatically.
+
+                // disable viewport recalculations, thanks to this animations will not change viewport automatically
                 holder.mLineChartView.setViewportCalculationEnabled(false);
 
                 holder.mLineChartView.setOnValueTouchListener(new LineChartOnValueSelectListener() {
@@ -171,7 +170,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 });
                 break;
             case Constants.RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE.TYPE_BODY:
-                holder.mTextView.setText(mPlankLogs.get(position).toString());
+                holder.mDatetimeTextView.setText(mPlankLogs.get(position).getDatetime());
+                holder.mDurationTextView.setText(TimeUtils.mSecToTimeFormat(mPlankLogs.get(position).getDuration()));
+                holder.mLapCountTextView.setText(String.valueOf(mPlankLogs.get(position).getLapCount()));
+                holder.mMethodTextView.setText(mPlankLogs.get(position).getMethod());
                 break;
         }
     }
@@ -195,8 +197,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         @Nullable
-        @BindView(R.id.statistics_chart_line_text_view)
-        TextView mTextView;
+        @BindView(R.id.statistics_chart_line_text_view_datetime)
+        TextView mDatetimeTextView;
+
+        @Nullable
+        @BindView(R.id.statistics_chart_line_text_view_duration)
+        TextView mDurationTextView;
+
+        @Nullable
+        @BindView(R.id.statistics_chart_line_text_view_lap_count)
+        TextView mLapCountTextView;
+
+        @Nullable
+        @BindView(R.id.statistics_chart_line_text_view_method)
+        TextView mMethodTextView;
 
         @Nullable
         @BindView(R.id.statistics_chart_line_chart_view)

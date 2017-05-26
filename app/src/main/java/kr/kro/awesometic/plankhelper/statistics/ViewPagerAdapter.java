@@ -19,6 +19,8 @@ import kr.kro.awesometic.plankhelper.statistics.log.LogPresenter;
  * Created by Awesometic on 2017-05-17.
  */
 
+// TODO add filter to select date range to toolbar when users are going to chart fragment
+
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
