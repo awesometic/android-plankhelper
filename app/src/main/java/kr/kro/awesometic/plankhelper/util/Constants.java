@@ -5,6 +5,8 @@ package kr.kro.awesometic.plankhelper.util;
  */
 
 public class Constants {
+
+    public static final String LOG_TAG = "Awesometic";
     
     public interface NOTIFICATION_ID {
         int FOREGROUND_SERVICE = 12071;

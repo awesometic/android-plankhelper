@@ -1,5 +1,7 @@
 package kr.kro.awesometic.plankhelper.util;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,25 +60,16 @@ public class TimeUtils {
         return String.format(Locale.getDefault(), "%02d:%02d:%02d.%03d", hour, minute, second, mSec % 1000);
     }
 
-    public static List<Integer> getDaysOfCurrentWeek() {
+    public static List<Integer> getDaysOfCurrentWeek(int startOfTheWeek) {
         List<Integer> resultDays = new ArrayList<Integer>();
-
-        String currentDate = getCurrentDateFormatted();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd", Locale.getDefault());
-        Date date = null;
-        try {
-            date = simpleDateFormat.parse(currentDate);
-        } catch (ParseException _e){
-            _e.printStackTrace();
-        }
 
-        Calendar cal = Calendar.getInstance(Locale.getDefault());
-        cal.setTime(date);
-        cal.add(Calendar.DATE, 1 - cal.get(Calendar.DAY_OF_WEEK));
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.set(Calendar.DAY_OF_WEEK, startOfTheWeek);
 
-        for (int i = 0; i <= 7; i++) {
+        for (int i = 0; i < 7; i++) {
             if (i == 0)
-                resultDays.add(Integer.parseInt(simpleDateFormat.format(cal.getTime())));
+                resultDays.add(Integer.parseInt(simpleDateFormat.format(calendar.getTime())));
             else
                 resultDays.add(resultDays.get(i - 1) + 1);
         }

@@ -43,15 +43,17 @@ public class ChartPresenter implements ChartContract.Presenter {
     }
 
     private void initPresenter() {
+        mRecyclerViewAdapter = new RecyclerViewAdapter();
+
         mPlankLogsRepository.getPlankLogs(new PlankLogsDataSource.LoadPlankLogsCallback() {
             @Override
             public void onPlankLogsLoaded(List<PlankLog> plankLogs) {
-                mRecyclerViewAdapter = new RecyclerViewAdapter((ArrayList<PlankLog>) plankLogs);
+                mRecyclerViewAdapter.setPlankLogs((ArrayList<PlankLog>) plankLogs);
             }
 
             @Override
             public void onDataNotAvailable() {
-                mRecyclerViewAdapter = new RecyclerViewAdapter(null);
+
             }
         });
     }
