@@ -50,11 +50,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 0, 0, 0, 0, 0, 0, 0
         };
         daysOfWeek = TimeUtils.getDaysOfCurrentWeek(mSingleton.getStartOfTheWeek());
+
+        // position 0 에 차트를 그리기 위한 더미 데이터(null) 삽입
+        mPlankLogs.add(null);
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? Constants.RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE.TYPE_HEADER : Constants.RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE.TYPE_BODY;
+        return (position == 0) ? Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD : Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY;
     }
 
     @Override
@@ -62,12 +66,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         View view;
 
         switch (viewType) {
-            case Constants.RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE.TYPE_HEADER:
+            case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.statistics_chart_line_head, parent, false);
                 break;
 
-            case Constants.RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE.TYPE_BODY:
+            case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.statistics_chart_line_body_item, parent, false);
                 break;
@@ -86,7 +90,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Log.d(Constants.LOG_TAG, getClass().toString() + " this week: " + daysOfWeek.toString());
 
         switch (getItemViewType(position)) {
-            case Constants.RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE.TYPE_HEADER:
+            case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD:
                 for (int i = 1; i < mPlankLogs.size(); i++) {
                     int plankLogDay = Integer.parseInt(mPlankLogs.get(i).getDatetime().split(" ")[0].split("-")[2]);
                     int orderOfWeek = daysOfWeek.indexOf(plankLogDay);
@@ -169,7 +173,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     }
                 });
                 break;
-            case Constants.RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE.TYPE_BODY:
+            case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY:
                 holder.mDatetimeTextView.setText(mPlankLogs.get(position).getDatetime());
                 holder.mDurationTextView.setText(TimeUtils.mSecToTimeFormat(mPlankLogs.get(position).getDuration()));
                 holder.mLapCountTextView.setText(String.valueOf(mPlankLogs.get(position).getLapCount()));
@@ -184,14 +188,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void setPlankLogs(ArrayList<PlankLog> plankLogs) {
-        // position 0 에 차트를 그리기 위한 더미 데이터(null) 삽입
-        mPlankLogs.add(null);
-
         // position 1부터 실제 데이터 삽입
         mPlankLogs.addAll(plankLogs);
-
-        // 데이터셋 변경 알림
-        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

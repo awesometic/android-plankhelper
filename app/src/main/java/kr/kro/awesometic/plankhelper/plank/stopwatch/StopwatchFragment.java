@@ -1,16 +1,24 @@
 package kr.kro.awesometic.plankhelper.plank.stopwatch;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
@@ -25,6 +33,13 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
 
     private StopwatchContract.Presenter mPresenter;
 
+    @BindView(R.id.plank_stopwatch_recyclerview)
+    RecyclerView mRecyclerView;
+
+    private LapTimeListViewAdapter mLapTimeListViewAdapter;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
+
+    private ViewGroup mViewGroup;
     private TextView tvHour;
     private TextView tvMin;
     private TextView tvSec;
@@ -32,8 +47,6 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
     private ListView lvLapTime;
     private Button btnOnOff;
     private Button btnResetLap;
-
-    private LapTimeListViewAdapter mLapTimeListViewAdapter;
 
     public StopwatchFragment() {
 
@@ -51,17 +64,7 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.plank_stopwatch_frag, container, false);
-
-        tvHour = (TextView) rootView.findViewById(R.id.textView_hour);
-        tvMin = (TextView) rootView.findViewById(R.id.textView_min);
-        tvSec = (TextView) rootView.findViewById(R.id.textView_sec);
-        tvMSec = (TextView) rootView.findViewById(R.id.textView_mSec);
-        lvLapTime = (ListView) rootView.findViewById(R.id.listView_stopwatch_lap);
-        btnOnOff = (Button) rootView.findViewById(R.id.button_stopwatch_on_off);
-        btnResetLap = (Button) rootView.findViewById(R.id.button_stopwatch_reset_lap);
-
-        btnOnOff.setOnClickListener(btnOnOffOnClickListener);
-        btnResetLap.setOnClickListener(btnResetLapOnClickListener);
+        ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -71,8 +74,12 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
         super.onResume();
 
         mPresenter.start();
+
         lvLapTime.setAdapter(mLapTimeListViewAdapter);
         lvLapTime.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+
+        btnOnOff.setOnClickListener(btnOnOffOnClickListener);
+        btnResetLap.setOnClickListener(btnResetLapOnClickListener);
 
         mPresenter.bindPlankService();
     }
@@ -93,6 +100,28 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
     @Override
     public void setLapTimeAdapter(Object lapTimeAdapter) {
         mLapTimeListViewAdapter = (LapTimeListViewAdapter) lapTimeAdapter;
+    }
+
+    @Override
+    public void setRecyclerViewAdapter(Object recyclerViewAdapter) {
+        mRecyclerViewAdapter = (RecyclerViewAdapter) recyclerViewAdapter;
+        mRecyclerViewAdapter.setHasStableIds(true);
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
+        mRecyclerViewAdapter.notifyDataSetChanged();
+
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+
+        mViewGroup = mRecyclerViewAdapter.getHeadViewGroup();
+        tvHour = (TextView) mViewGroup.findViewWithTag(Constants.PLANK_STOPWATCH_RCV_TAGS.TV_HOUR);
+        tvMin = (TextView) mViewGroup.findViewWithTag(Constants.PLANK_STOPWATCH_RCV_TAGS.TV_MIN);
+        tvSec = (TextView) mViewGroup.findViewWithTag(Constants.PLANK_STOPWATCH_RCV_TAGS.TV_SEC);
+        tvMSec = (TextView) mViewGroup.findViewWithTag(Constants.PLANK_STOPWATCH_RCV_TAGS.TV_MSEC);
+        lvLapTime = (ListView) mViewGroup.findViewWithTag(Constants.PLANK_STOPWATCH_RCV_TAGS.LV_LAPTIME);
+        btnOnOff = (Button) mViewGroup.findViewWithTag(Constants.PLANK_STOPWATCH_RCV_TAGS.BTN_ONOFF);
+        btnResetLap = (Button) mViewGroup.findViewWithTag(Constants.PLANK_STOPWATCH_RCV_TAGS.BTN_RESETLAP);
     }
 
     @Override

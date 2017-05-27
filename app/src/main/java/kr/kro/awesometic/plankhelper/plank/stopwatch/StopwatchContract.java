@@ -13,6 +13,7 @@ public interface StopwatchContract {
 
         Object getActivityContext();
 
+        void setRecyclerViewAdapter(Object recyclerViewAdapter);
         void setLapTimeAdapter(Object lapTimeAdapter);
 
         String getTimeString();

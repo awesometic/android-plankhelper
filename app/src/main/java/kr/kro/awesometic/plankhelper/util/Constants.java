@@ -77,9 +77,19 @@ public class Constants {
         int STOPWATCH_FREQUENCY_IN_MILLISECOND = 100;
     }
 
-    public interface RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE {
-        int TYPE_HEADER =  0;
+    public interface RECYCLERVIEW_ADAPTER_VIEWTYPE {
+        int TYPE_HEAD =  0;
         int TYPE_BODY = 1;
+    }
+
+    public interface PLANK_STOPWATCH_RCV_TAGS {
+        int TV_HOUR = 0;
+        int TV_MIN = 1;
+        int TV_SEC = 2;
+        int TV_MSEC = 3;
+        int LV_LAPTIME = 4;
+        int BTN_ONOFF = 5;
+        int BTN_RESETLAP = 6;
     }
 
     public interface DATABASE {

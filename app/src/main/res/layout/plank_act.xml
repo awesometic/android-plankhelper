@@ -8,42 +8,26 @@
     tools:context=".plank.PlankActivity"
     tools:openDrawer="start">
 
-    <LinearLayout
+    <com.github.florent37.materialviewpager.MaterialViewPager
+        android:id="@+id/plank_materialViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        app:viewpager_logo="@layout/header_logo"
+        app:viewpager_logoMarginTop="100dp"
+        app:viewpager_color="@color/colorPrimary"
+        app:viewpager_headerHeight="200dp"
+        app:viewpager_headerAlpha="1.0"
+        app:viewpager_hideLogoWithFade="false"
+        app:viewpager_hideToolbarAndTitle="true"
+        app:viewpager_enableToolbarElevation="true"
+        app:viewpager_parallaxHeaderFactor="1.5"
+        app:viewpager_headerAdditionalHeight="20dp"
+        app:viewpager_displayToolbarWhenSwipe="true"
+        app:viewpager_transparentToolbar="true"
+        app:viewpager_animatedHeaderImage="true"
+        app:viewpager_disableToolbar="false"
+        />
 
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/plank_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/Toolbar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/plank_tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/Toolbar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-        </android.support.design.widget.AppBarLayout>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/plank_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    </LinearLayout>
-
-    <!-- Navigation Drawer -->
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

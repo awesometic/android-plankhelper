@@ -49,6 +49,7 @@ public class ChartPresenter implements ChartContract.Presenter {
             @Override
             public void onPlankLogsLoaded(List<PlankLog> plankLogs) {
                 mRecyclerViewAdapter.setPlankLogs((ArrayList<PlankLog>) plankLogs);
+                mRecyclerViewAdapter.notifyDataSetChanged();
             }
 
             @Override
