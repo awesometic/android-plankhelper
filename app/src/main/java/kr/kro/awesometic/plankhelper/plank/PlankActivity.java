@@ -19,15 +19,23 @@ import android.widget.Toast;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.settings.SettingsActivity;
 import kr.kro.awesometic.plankhelper.statistics.StatisticsActivity;
+import kr.kro.awesometic.plankhelper.util.Singleton;
 
 public class PlankActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private Singleton mSingleton = Singleton.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.plank_act);
+
+        // 싱글톤 설정
+        // 임시로 일요일(Calendar.SUNDAY)
+        mSingleton.setStartOfTheWeek(1);
+        // 임시로 10초
+        mSingleton.setLineChartUnitOfAxisY(10000);
 
         // toolbar 설정
         Toolbar toolbar = (Toolbar) findViewById(R.id.plank_toolbar);

@@ -40,9 +40,6 @@ public class ChartFragment extends Fragment implements ChartContract.View {
     private ChartContract.Presenter mPresenter;
     private Context mContext;
 
-    @BindView(R.id.statistics_chart_line_chart_view)
-    LineChartView mLineChartView;
-
     @BindView(R.id.statistics_chart_line_recycler_view)
     RecyclerView mRecyclerView;
 
@@ -78,40 +75,6 @@ public class ChartFragment extends Fragment implements ChartContract.View {
         mRecyclerViewLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mRecyclerViewLayoutManager);
 
-        List<PointValue> values = new ArrayList<PointValue>();
-        values.add(new PointValue(0, 2));
-        values.add(new PointValue(1, 4));
-        values.add(new PointValue(2, 3));
-        values.add(new PointValue(3, 4));
-
-        List<Line> lines = new ArrayList<Line>();
-
-        Line line = new Line(values)
-                .setColor(Color.BLUE)
-                .setCubic(true)
-                .setShape(ValueShape.CIRCLE)
-                .setFilled(false)
-                .setHasLabels(true)
-                .setHasLabelsOnlyForSelected(true)
-                .setHasLines(true)
-                .setHasPoints(true);
-        lines.add(line);
-
-        // set axis
-        LineChartData data = new LineChartData(lines);
-        Axis axisX = new Axis();
-        Axis axisY = new Axis().setHasLines(true);
-        axisX.setName("Axis X");
-        axisY.setName("Axis Y");
-        data.setAxisXBottom(axisX);
-        data.setAxisYLeft(axisY);
-
-        // bind data to view
-        mLineChartView.setLineChartData(data);
-
-        // bind OnValueSelect event listener
-        mLineChartView.setOnValueTouchListener(lineChartOnValueSelectListener);
-
         return rootView;
     }
 
@@ -133,17 +96,4 @@ public class ChartFragment extends Fragment implements ChartContract.View {
         mRecyclerViewAdapter = (RecyclerViewAdapter) recyclerViewAdapter;
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
     }
-
-
-    LineChartOnValueSelectListener lineChartOnValueSelectListener = new LineChartOnValueSelectListener() {
-        @Override
-        public void onValueSelected(int lineIndex, int pointIndex, PointValue value) {
-
-        }
-
-        @Override
-        public void onValueDeselected() {
-
-        }
-    };
 }

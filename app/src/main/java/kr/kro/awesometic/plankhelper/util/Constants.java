@@ -5,6 +5,8 @@ package kr.kro.awesometic.plankhelper.util;
  */
 
 public class Constants {
+
+    public static final String LOG_TAG = "Awesometic";
     
     public interface NOTIFICATION_ID {
         int FOREGROUND_SERVICE = 12071;
@@ -73,6 +75,11 @@ public class Constants {
 
     public interface UPDATE_DISPLAY {
         int STOPWATCH_FREQUENCY_IN_MILLISECOND = 100;
+    }
+
+    public interface RECYCLERVIEW_ADAPTER_WEEK_VIEWTYPE {
+        int TYPE_HEADER =  0;
+        int TYPE_BODY = 1;
     }
 
     public interface DATABASE {
