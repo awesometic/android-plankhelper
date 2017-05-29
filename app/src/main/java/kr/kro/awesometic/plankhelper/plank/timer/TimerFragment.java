@@ -1,20 +1,32 @@
 package kr.kro.awesometic.plankhelper.plank.timer;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.ViewAnimator;
+
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
@@ -27,16 +39,30 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TimerFragment extends Fragment implements TimerContract.View {
 
+    private static final int ANIMATOR_POSITION_LIST = 0;
+    private static final int ANIMATOR_POSITION_LOADING = 1;
+
     private TimerContract.Presenter mPresenter;
-    
+    private Context mContext;
+
+    @BindView(R.id.plank_timer_frag_animator)
+    ViewAnimator mViewAnimator;
+
+    // ButterKnife 가 아니라 mViewAnimator 에 의해 초기화 됨
+    private RecyclerView mRecyclerView;
+
+    private LapTimeListViewAdapter mLapTimeListViewAdapter;
+
+    private RecyclerView.Adapter mRecyclerViewAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private boolean mIsViewsBound;
     private NumberPicker npHour;
     private NumberPicker npMin;
     private NumberPicker npSec;
     private ListView lvLapTime;
     private Button btnOnOff;
     private Button btnResetLap;
-    
-    private LapTimeListViewAdapter mLapTimeListViewAdapter;
 
     public TimerFragment() {
 
@@ -51,72 +77,55 @@ public class TimerFragment extends Fragment implements TimerContract.View {
         mPresenter = checkNotNull(presenter);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mContext = getActivity().getApplicationContext();
+        mIsViewsBound = false;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.plank_timer_frag, container, false);
-        
-        npHour = (NumberPicker) rootView.findViewById(R.id.numberPicker_hour);
-        npMin = (NumberPicker) rootView.findViewById(R.id.numberPicker_min);
-        npSec = (NumberPicker) rootView.findViewById(R.id.numberPicker_sec);
-        lvLapTime = (ListView) rootView.findViewById(R.id.listView_timer_lap);
-        btnOnOff = (Button) rootView.findViewById(R.id.button_timer_on_off);
-        btnResetLap = (Button) rootView.findViewById(R.id.button_timer_reset_lap);
+        ButterKnife.bind(this, rootView);
 
-        npHour.setMaxValue(99);
-        npMin.setMaxValue(59);
-        npSec.setMaxValue(59);
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(ANIMATOR_POSITION_LIST);
 
-        npHour.setMinValue(0);
-        npMin.setMinValue(0);
-        npSec.setMinValue(0);
-
-        npHour.setFormatter(new NumberPicker.Formatter() {
-            @Override
-            public String format(int value) {
-                return String.format(Locale.getDefault(), "%02d", value);
-            }
-        });
-        npMin.setFormatter(new NumberPicker.Formatter() {
-            @Override
-            public String format(int value) {
-                return String.format(Locale.getDefault(), "%02d", value);
-            }
-        });
-        npSec.setFormatter(new NumberPicker.Formatter() {
-            @Override
-            public String format(int value) {
-                return String.format(Locale.getDefault(), "%02d", value);
-            }
-        });
-
-        npHour.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        npMin.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        npSec.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-
-        btnOnOff.setOnClickListener(btnOnOffOnClickListener);
-        btnResetLap.setOnClickListener(btnResetLapOnClickListener);
-        
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mPresenter.start();
+        mPresenter.bindPlankService();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        mPresenter.start();
-        lvLapTime.setAdapter(mLapTimeListViewAdapter);
-        lvLapTime.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-
-        mPresenter.bindPlankService();
     }
 
     @Override
     public void onDestroy() {
         mPresenter.appExit(Constants.CALLER.FROM_TIMER_FRAGMENT);
         mPresenter.unbindPlankService();
-        
+
         super.onDestroy();
+    }
+
+    @Override
+    public void showLoading() {
+        mViewAnimator.setDisplayedChild(ANIMATOR_POSITION_LOADING);
+    }
+
+    @Override
+    public void showTimer() {
+        mViewAnimator.setDisplayedChild(ANIMATOR_POSITION_LIST);
     }
 
     @Override
@@ -127,6 +136,83 @@ public class TimerFragment extends Fragment implements TimerContract.View {
     @Override
     public void setLapTimeAdapter(Object lapTimeAdapter) {
         mLapTimeListViewAdapter = (LapTimeListViewAdapter) lapTimeAdapter;
+    }
+
+    @Override
+    public void setRecyclerViewAdapter(Object recyclerViewAdapter) {
+        mRecyclerViewAdapter = (RecyclerViewAdapter) recyclerViewAdapter;
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (!mIsViewsBound) {
+                    mPresenter.bindViewsFromViewHolderToFrag();
+
+                    mIsViewsBound = true;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void bindViewsFromViewHolder() {
+        RecyclerViewAdapter.ViewHolder holder = (RecyclerViewAdapter.ViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
+
+        if (holder.getItemViewType() == Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD) {
+
+            npHour = holder.npHour;
+            npMin = holder.npMin;
+            npSec = holder.npSec;
+            lvLapTime = holder.lvLapTime;
+            btnOnOff = holder.btnOnOff;
+            btnResetLap = holder.btnResetLap;
+
+            npHour.setMaxValue(10);
+            npMin.setMaxValue(59);
+            npSec.setMaxValue(59);
+
+            npHour.setMinValue(0);
+            npMin.setMinValue(0);
+            npSec.setMinValue(0);
+
+            setDividerColor(npHour, ContextCompat.getColor(mContext, R.color.numberPickerDivider));
+            setDividerColor(npMin, ContextCompat.getColor(mContext, R.color.numberPickerDivider));
+            setDividerColor(npSec, ContextCompat.getColor(mContext, R.color.numberPickerDivider));
+
+            npHour.setFormatter(new NumberPicker.Formatter() {
+                @Override
+                public String format(int value) {
+                    return String.format(Locale.getDefault(), "%02d", value);
+                }
+            });
+            npMin.setFormatter(new NumberPicker.Formatter() {
+                @Override
+                public String format(int value) {
+                    return String.format(Locale.getDefault(), "%02d", value);
+                }
+            });
+            npSec.setFormatter(new NumberPicker.Formatter() {
+                @Override
+                public String format(int value) {
+                    return String.format(Locale.getDefault(), "%02d", value);
+                }
+            });
+
+            npHour.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+            npMin.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+            npSec.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+            btnOnOff.setOnClickListener(btnOnOffOnClickListener);
+            btnResetLap.setOnClickListener(btnResetLapOnClickListener);
+
+            lvLapTime.setAdapter(mLapTimeListViewAdapter);
+            lvLapTime.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        }
     }
 
     @Override
@@ -258,4 +344,27 @@ public class TimerFragment extends Fragment implements TimerContract.View {
             }
         }
     };
+
+    /** https://stackoverflow.com/questions/24233556/changing-numberpicker-divider-color
+     * */
+    private void setDividerColor(NumberPicker picker, int color) {
+
+        java.lang.reflect.Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+        for (java.lang.reflect.Field pf : pickerFields) {
+            if (pf.getName().equals("mSelectionDivider")) {
+                pf.setAccessible(true);
+                try {
+                    ColorDrawable colorDrawable = new ColorDrawable(color);
+                    pf.set(picker, colorDrawable);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (Resources.NotFoundException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
+    }
 }

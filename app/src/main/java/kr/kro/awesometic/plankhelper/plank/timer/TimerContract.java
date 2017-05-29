@@ -11,9 +11,15 @@ public interface TimerContract {
 
     interface View extends BaseView<Presenter> {
 
+        void showLoading();
+        void showTimer();
+
         Object getActivityContext();
 
         void setLapTimeAdapter(Object lapTimeAdapter);
+        void setRecyclerViewAdapter(Object recyclerViewAdapter);
+
+        void bindViewsFromViewHolder();
 
         String getTimeString();
         void numberPickerChangeValueByOne(int type, boolean increment);
@@ -34,6 +40,7 @@ public interface TimerContract {
 
     interface Presenter extends BasePresenter {
 
+        void bindViewsFromViewHolderToFrag();
         void bindPlankService();
         void unbindPlankService();
 

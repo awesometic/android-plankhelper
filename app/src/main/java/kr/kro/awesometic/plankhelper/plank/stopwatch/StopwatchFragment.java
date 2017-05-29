@@ -1,16 +1,26 @@
 package kr.kro.awesometic.plankhelper.plank.stopwatch;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
@@ -23,8 +33,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StopwatchFragment extends Fragment implements StopwatchContract.View {
 
-    private StopwatchContract.Presenter mPresenter;
+    private static final int ANIMATOR_POSITION_LIST = 0;
+    private static final int ANIMATOR_POSITION_LOADING = 1;
 
+    private StopwatchContract.Presenter mPresenter;
+    private Context mContext;
+
+    @BindView(R.id.plank_stopwatch_frag_animator)
+    ViewAnimator mViewAnimator;
+
+    // ButterKnife 가 아니라 mViewAnimator 에 의해 초기화 됨
+    private RecyclerView mRecyclerView;
+
+    private LapTimeListViewAdapter mLapTimeListViewAdapter;
+
+    private RecyclerView.Adapter mRecyclerViewAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private boolean mIsViewsBound;
     private TextView tvHour;
     private TextView tvMin;
     private TextView tvSec;
@@ -32,8 +58,6 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
     private ListView lvLapTime;
     private Button btnOnOff;
     private Button btnResetLap;
-
-    private LapTimeListViewAdapter mLapTimeListViewAdapter;
 
     public StopwatchFragment() {
 
@@ -47,34 +71,37 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
         mPresenter = checkNotNull(presenter);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mContext = getActivity().getApplicationContext();
+        mIsViewsBound = false;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.plank_stopwatch_frag, container, false);
+        ButterKnife.bind(this, rootView);
 
-        tvHour = (TextView) rootView.findViewById(R.id.textView_hour);
-        tvMin = (TextView) rootView.findViewById(R.id.textView_min);
-        tvSec = (TextView) rootView.findViewById(R.id.textView_sec);
-        tvMSec = (TextView) rootView.findViewById(R.id.textView_mSec);
-        lvLapTime = (ListView) rootView.findViewById(R.id.listView_stopwatch_lap);
-        btnOnOff = (Button) rootView.findViewById(R.id.button_stopwatch_on_off);
-        btnResetLap = (Button) rootView.findViewById(R.id.button_stopwatch_reset_lap);
-
-        btnOnOff.setOnClickListener(btnOnOffOnClickListener);
-        btnResetLap.setOnClickListener(btnResetLapOnClickListener);
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(ANIMATOR_POSITION_LIST);
 
         return rootView;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
 
         mPresenter.start();
-        lvLapTime.setAdapter(mLapTimeListViewAdapter);
-        lvLapTime.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-
         mPresenter.bindPlankService();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -86,6 +113,16 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
     }
 
     @Override
+    public void showLoading() {
+        mViewAnimator.setDisplayedChild(ANIMATOR_POSITION_LOADING);
+    }
+
+    @Override
+    public void showStopwatch() {
+        mViewAnimator.setDisplayedChild(ANIMATOR_POSITION_LIST);
+    }
+
+    @Override
     public Object getActivityContext() {
         return getActivity();
     }
@@ -93,6 +130,48 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
     @Override
     public void setLapTimeAdapter(Object lapTimeAdapter) {
         mLapTimeListViewAdapter = (LapTimeListViewAdapter) lapTimeAdapter;
+    }
+
+    @Override
+    public void setRecyclerViewAdapter(Object recyclerViewAdapter) {
+        mRecyclerViewAdapter = (RecyclerViewAdapter) recyclerViewAdapter;
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (!mIsViewsBound) {
+                    mPresenter.bindViewsFromViewHolderToFrag();
+
+                    mIsViewsBound = true;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void bindViewsFromViewHolder() {
+        RecyclerViewAdapter.ViewHolder holder = (RecyclerViewAdapter.ViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
+
+        if (holder.getItemViewType() == Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD) {
+            tvHour = holder.tvHour;
+            tvMin = holder.tvMin;
+            tvSec = holder.tvSec;
+            tvMSec = holder.tvMSec;
+            lvLapTime = holder.lvLapTime;
+            btnOnOff = holder.btnOnOff;
+            btnResetLap = holder.btnResetLap;
+
+            btnOnOff.setOnClickListener(btnOnOffOnClickListener);
+            btnResetLap.setOnClickListener(btnResetLapOnClickListener);
+
+            lvLapTime.setAdapter(mLapTimeListViewAdapter);
+            lvLapTime.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        }
     }
 
     @Override

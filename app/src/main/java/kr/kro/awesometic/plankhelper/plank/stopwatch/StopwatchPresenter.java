@@ -33,6 +33,7 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
     private final StopwatchContract.View mStopwatchView;
 
     private LapTimeListViewAdapter mLapTimeListViewAdapter;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
     private Context mActivityContext;
 
     private PlankService mPlankService;
@@ -128,11 +129,25 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
     private void initStopwatchView() {
         if (!mBound) {
+            mStopwatchView.showLoading();
+
             mLapTimeListViewAdapter = new LapTimeListViewAdapter();
+            mRecyclerViewAdapter = new RecyclerViewAdapter();
+
             mStopwatchView.setLapTimeAdapter(mLapTimeListViewAdapter);
-            mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
-            mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
+            mStopwatchView.setRecyclerViewAdapter(mRecyclerViewAdapter);
+
+            mRecyclerViewAdapter.setPlankLogs(null);
+
+            mStopwatchView.showStopwatch();
         }
+    }
+
+    @Override
+    public void bindViewsFromViewHolderToFrag() {
+        mStopwatchView.bindViewsFromViewHolder();
+        mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
+        mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
     }
 
     private void addLapTimeItem(long passedMSec, long intervalMSec) {

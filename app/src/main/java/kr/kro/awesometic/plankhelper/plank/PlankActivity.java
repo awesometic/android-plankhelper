@@ -1,10 +1,13 @@
 package kr.kro.awesometic.plankhelper.plank;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -16,6 +19,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.header.HeaderDesign;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.settings.SettingsActivity;
 import kr.kro.awesometic.plankhelper.statistics.StatisticsActivity;
@@ -23,13 +31,22 @@ import kr.kro.awesometic.plankhelper.util.Singleton;
 
 public class PlankActivity extends AppCompatActivity {
 
-    private DrawerLayout mDrawerLayout;
     private Singleton mSingleton = Singleton.getInstance();
+
+    @BindView(R.id.plank_materialViewPager)
+    MaterialViewPager mMaterialViewPager;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @BindView(R.id.nav_view)
+    NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.plank_act);
+        ButterKnife.bind(this);
 
         // 싱글톤 설정
         // 임시로 일요일(Calendar.SUNDAY)
@@ -37,27 +54,42 @@ public class PlankActivity extends AppCompatActivity {
         // 임시로 10초
         mSingleton.setLineChartUnitOfAxisY(10000);
 
-        // toolbar 설정
-        Toolbar toolbar = (Toolbar) findViewById(R.id.plank_toolbar);
+        Toolbar toolbar = mMaterialViewPager.getToolbar();
         setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_24dp);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // view pager 설정
-        ViewPager viewPager = (ViewPager) findViewById(R.id.plank_view_pager);
         PagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), PlankActivity.this);
+        ViewPager viewPager = mMaterialViewPager.getViewPager();
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(pagerAdapter.getCount());
 
-        // tab layout 설정
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.plank_tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
+        mMaterialViewPager.getPagerTitleStrip().setViewPager(viewPager);
 
-        // navigation drawer 설정
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            setupDrawerContent(navigationView);
+        mMaterialViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.green,
+                                "http://phandroid.s3.amazonaws.com/wp-content/uploads/2014/06/android_google_moutain_google_now_1920x1080_wallpaper_Wallpaper-HD_2560x1600_www.paperhi.com_-640x400.jpg");
+                    case 1:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.blue,
+                                "http://www.hdiphonewallpapers.us/phone-wallpapers/540x960-1/540x960-mobile-wallpapers-hd-2218x5ox3.jpg");
+                }
+
+                //execute others actions if needed (ex : modify your header logo)
+
+                return null;
+            }
+        });
+
+        if (mNavigationView != null) {
+            setupDrawerContent(mNavigationView);
         }
     }
 

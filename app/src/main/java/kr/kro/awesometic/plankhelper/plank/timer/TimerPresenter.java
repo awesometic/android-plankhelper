@@ -30,6 +30,7 @@ public class TimerPresenter implements  TimerContract.Presenter {
     private final TimerContract.View mTimerView;
 
     private LapTimeListViewAdapter mLapTimeListViewAdapter;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
     private Context mActivityContext;
 
     private PlankService mPlankService;
@@ -139,11 +140,25 @@ public class TimerPresenter implements  TimerContract.Presenter {
 
     private void initTimerView() {
         if (!mBound) {
+            mTimerView.showLoading();
+
             mLapTimeListViewAdapter = new LapTimeListViewAdapter();
+            mRecyclerViewAdapter = new RecyclerViewAdapter();
+
             mTimerView.setLapTimeAdapter(mLapTimeListViewAdapter);
-            mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
-            mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
+            mTimerView.setRecyclerViewAdapter(mRecyclerViewAdapter);
+
+            mRecyclerViewAdapter.setPlankLogs(null);
+
+            mTimerView.showTimer();
         }
+    }
+
+    @Override
+    public void bindViewsFromViewHolderToFrag() {
+        mTimerView.bindViewsFromViewHolder();
+        mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
+        mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
     }
 
     private void addLapTimeItem(long passedMSec, long intervalMSec) {

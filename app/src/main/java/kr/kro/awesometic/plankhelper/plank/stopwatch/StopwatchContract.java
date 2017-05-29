@@ -11,9 +11,15 @@ public interface StopwatchContract {
 
     interface View extends BaseView<Presenter> {
 
+        void showLoading();
+        void showStopwatch();
+
         Object getActivityContext();
 
+        void setRecyclerViewAdapter(Object recyclerViewAdapter);
         void setLapTimeAdapter(Object lapTimeAdapter);
+
+        void bindViewsFromViewHolder();
 
         String getTimeString();
         void setHour(String hour);
@@ -33,6 +39,7 @@ public interface StopwatchContract {
 
     interface Presenter extends BasePresenter {
 
+        void bindViewsFromViewHolderToFrag();
         void bindPlankService();
         void unbindPlankService();
 
