@@ -169,7 +169,7 @@ public class TimerFragment extends Fragment implements TimerContract.View {
             btnOnOff = holder.btnOnOff;
             btnResetLap = holder.btnResetLap;
 
-            npHour.setMaxValue(99);
+            npHour.setMaxValue(10);
             npMin.setMaxValue(59);
             npSec.setMaxValue(59);
 
