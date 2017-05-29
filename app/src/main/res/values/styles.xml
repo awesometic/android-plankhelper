@@ -35,4 +35,12 @@
         <item name="spinBars">true</item>
         <item name="color">@color/drawerArrowColor</item>
     </style>
+
+    <style name="CardViewTheme" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/plankCardViewPrimaryColor</item>
+    </style>
+
+    <style name="DrawerTheme" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/NavigationDrawerPrimaryColor</item>
+    </style>
 </resources>

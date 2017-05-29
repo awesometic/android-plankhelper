@@ -1,10 +1,13 @@
 package kr.kro.awesometic.plankhelper.plank.timer;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -111,7 +114,7 @@ public class TimerFragment extends Fragment implements TimerContract.View {
     public void onDestroy() {
         mPresenter.appExit(Constants.CALLER.FROM_TIMER_FRAGMENT);
         mPresenter.unbindPlankService();
-        
+
         super.onDestroy();
     }
 
@@ -176,6 +179,10 @@ public class TimerFragment extends Fragment implements TimerContract.View {
             npHour.setMinValue(0);
             npMin.setMinValue(0);
             npSec.setMinValue(0);
+
+            setDividerColor(npHour, ContextCompat.getColor(mContext, R.color.numberPickerDivider));
+            setDividerColor(npMin, ContextCompat.getColor(mContext, R.color.numberPickerDivider));
+            setDividerColor(npSec, ContextCompat.getColor(mContext, R.color.numberPickerDivider));
 
             npHour.setFormatter(new NumberPicker.Formatter() {
                 @Override
@@ -337,4 +344,27 @@ public class TimerFragment extends Fragment implements TimerContract.View {
             }
         }
     };
+
+    /** https://stackoverflow.com/questions/24233556/changing-numberpicker-divider-color
+     * */
+    private void setDividerColor(NumberPicker picker, int color) {
+
+        java.lang.reflect.Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+        for (java.lang.reflect.Field pf : pickerFields) {
+            if (pf.getName().equals("mSelectionDivider")) {
+                pf.setAccessible(true);
+                try {
+                    ColorDrawable colorDrawable = new ColorDrawable(color);
+                    pf.set(picker, colorDrawable);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (Resources.NotFoundException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
+    }
 }
