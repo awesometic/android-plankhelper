@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.CardView
         android:id="@+id/plank_stopwatch_cardview_head"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="10dp"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="2dp">
@@ -102,7 +102,7 @@
             <ListView
                 android:id="@+id/listView_stopwatch_lap"
                 android:layout_width="368dp"
-                android:layout_height="330dp"
+                android:layout_height="250dp"
                 android:layout_marginBottom="0dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
@@ -110,7 +110,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout_stopwatch_buttons_wrapper"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout_stopwatch_watch_wrapper"/>
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout_stopwatch_watch_wrapper" />
 
             <LinearLayout
                 android:id="@+id/linearLayout_stopwatch_buttons_wrapper"

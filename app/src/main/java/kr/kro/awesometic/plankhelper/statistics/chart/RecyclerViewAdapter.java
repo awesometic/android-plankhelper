@@ -50,10 +50,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 0, 0, 0, 0, 0, 0, 0
         };
         daysOfWeek = TimeUtils.getDaysOfCurrentWeek(mSingleton.getStartOfTheWeek());
-
-        // position 0 에 차트를 그리기 위한 더미 데이터(null) 삽입
-        mPlankLogs.add(null);
-        notifyDataSetChanged();
     }
 
     @Override
@@ -188,8 +184,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void setPlankLogs(ArrayList<PlankLog> plankLogs) {
-        // position 1부터 실제 데이터 삽입
-        mPlankLogs.addAll(plankLogs);
+        mPlankLogs.clear();
+        notifyDataSetChanged();
+
+        // position 0 에 차트를 그리기 위한 더미 데이터(null) 삽입
+        mPlankLogs.add(null);
+        if (plankLogs != null && plankLogs.size() > 0) {
+            // position 1부터 실제 데이터 삽입
+            mPlankLogs.addAll(plankLogs);
+        }
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

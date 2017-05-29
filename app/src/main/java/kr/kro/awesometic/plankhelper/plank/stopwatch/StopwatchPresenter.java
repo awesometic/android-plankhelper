@@ -5,9 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.AsyncTask;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
@@ -37,8 +35,6 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
     private LapTimeListViewAdapter mLapTimeListViewAdapter;
     private RecyclerViewAdapter mRecyclerViewAdapter;
     private Context mActivityContext;
-
-    private boolean mIsLoadingData;
 
     private PlankService mPlankService;
     private boolean mBound = false;
@@ -132,20 +128,26 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
     }
 
     private void initStopwatchView() {
-        if (!mBound && !mIsLoadingData) {
+        if (!mBound) {
             mStopwatchView.showLoading();
-            new LoadDataTask().execute();
 
-            mRecyclerViewAdapter = new RecyclerViewAdapter();
             mLapTimeListViewAdapter = new LapTimeListViewAdapter();
-            mStopwatchView.setRecyclerViewAdapter(mRecyclerViewAdapter);
+            mRecyclerViewAdapter = new RecyclerViewAdapter();
+
             mStopwatchView.setLapTimeAdapter(mLapTimeListViewAdapter);
-            mStopwatchView.bindViewsFromViewHolder();
-            mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
-            mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
+            mStopwatchView.setRecyclerViewAdapter(mRecyclerViewAdapter);
+
+            mRecyclerViewAdapter.setPlankLogs(null);
 
             mStopwatchView.showStopwatch();
         }
+    }
+
+    @Override
+    public void bindViewsFromViewHolderToFrag() {
+        mStopwatchView.bindViewsFromViewHolder();
+        mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
+        mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
     }
 
     private void addLapTimeItem(long passedMSec, long intervalMSec) {
@@ -292,20 +294,5 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
     public void appExit(int caller) {
         ActivityCompat.finishAffinity((Activity) mActivityContext);
         System.exit(0);
-    }
-
-    // It's OK for this class not to be static and to keep a reference to the Presenter, as this
-    // is retained during orientation changes and is lightweight (has no activity/view reference)
-    private class LoadDataTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            SystemClock.sleep(3000);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            mIsLoadingData = false;
-        }
     }
 }

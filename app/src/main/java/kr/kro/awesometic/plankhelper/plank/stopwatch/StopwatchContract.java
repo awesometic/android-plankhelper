@@ -39,6 +39,7 @@ public interface StopwatchContract {
 
     interface Presenter extends BasePresenter {
 
+        void bindViewsFromViewHolderToFrag();
         void bindPlankService();
         void unbindPlankService();
 

@@ -25,14 +25,9 @@ import kr.kro.awesometic.plankhelper.util.Constants;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<PlankLog> mPlankLogs = new ArrayList<PlankLog>();
-    private ViewGroup mHeadViewGroup;
     
     public RecyclerViewAdapter() {
-        mHeadViewGroup = null;
 
-        // position 0 에 차트를 그리기 위한 더미 데이터(null) 삽입
-        mPlankLogs.add(null);
-        notifyDataSetChanged();
     }
 
     @Override
@@ -43,11 +38,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             default:
                 return Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY;
         }
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return mPlankLogs.get(position).hashCode();
     }
 
     @Override
@@ -81,25 +71,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD:
-                holder.tvHour.setTag(Constants.PLANK_STOPWATCH_RCV_TAGS.TV_HOUR);
-                holder.tvMin.setTag(Constants.PLANK_STOPWATCH_RCV_TAGS.TV_MIN);
-                holder.tvSec.setTag(Constants.PLANK_STOPWATCH_RCV_TAGS.TV_SEC);
-                holder.tvMSec.setTag(Constants.PLANK_STOPWATCH_RCV_TAGS.TV_MSEC);
-                holder.lvLapTime.setTag(Constants.PLANK_STOPWATCH_RCV_TAGS.LV_LAPTIME);
-                holder.btnOnOff.setTag(Constants.PLANK_STOPWATCH_RCV_TAGS.BTN_ONOFF);
-                holder.btnResetLap.setTag(Constants.PLANK_STOPWATCH_RCV_TAGS.BTN_RESETLAP);
-
-                ArrayList<View> views = new ArrayList<>();
-                views.add(holder.tvHour);
-                views.add(holder.tvMin);
-                views.add(holder.tvSec);
-                views.add(holder.tvMSec);
-                views.add(holder.lvLapTime);
-                views.add(holder.btnOnOff);
-                views.add(holder.btnResetLap);
-
-                mHeadViewGroup.addChildrenForAccessibility(views);
-                Log.d(Constants.LOG_TAG, "mHeadViewGroup ready");
 
                 break;
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY:
@@ -108,14 +79,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    public ViewGroup getHeadViewGroup() {
-        Log.d(Constants.LOG_TAG, "mHeadViewGroup returned");
-        return mHeadViewGroup;
-    }
-
     public void setPlankLogs(ArrayList<PlankLog> plankLogs) {
-        // position 1부터 실제 데이터 삽입
-        mPlankLogs.addAll(plankLogs);
+        mPlankLogs.clear();
+        notifyDataSetChanged();
+
+        // position 0 에 카드를 그리기 위한 더미 데이터(null) 삽입
+        mPlankLogs.add(null);
+        if (plankLogs != null && plankLogs.size() > 0) {
+            // position 1부터 실제 데이터 삽입
+            mPlankLogs.addAll(plankLogs);
+        }
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
