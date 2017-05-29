@@ -80,14 +80,6 @@ public class PlankActivity extends AppCompatActivity {
                         return HeaderDesign.fromColorResAndUrl(
                                 R.color.blue,
                                 "http://www.hdiphonewallpapers.us/phone-wallpapers/540x960-1/540x960-mobile-wallpapers-hd-2218x5ox3.jpg");
-                    case 2:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.cyan,
-                                "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg");
-                    case 3:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.red,
-                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
                 }
 
                 //execute others actions if needed (ex : modify your header logo)
