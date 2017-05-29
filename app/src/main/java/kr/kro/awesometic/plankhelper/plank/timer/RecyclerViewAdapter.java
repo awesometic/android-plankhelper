@@ -1,4 +1,4 @@
-package kr.kro.awesometic.plankhelper.plank.stopwatch;
+package kr.kro.awesometic.plankhelper.plank.timer;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,13 +19,13 @@ import kr.kro.awesometic.plankhelper.data.PlankLog;
 import kr.kro.awesometic.plankhelper.util.Constants;
 
 /**
- * Created by Awesometic on 2017-05-27.
+ * Created by Awesometic on 2017-05-29.
  */
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<PlankLog> mPlankLogs = new ArrayList<PlankLog>();
-    
+
     public RecyclerViewAdapter() {
 
     }
@@ -51,11 +52,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         switch (viewType) {
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD:
                 view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.plank_stopwatch_head, parent, false);
+                        .inflate(R.layout.plank_timer_head, parent, false);
                 break;
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY:
                 view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.plank_stopwatch_body, parent, false);
+                        .inflate(R.layout.plank_timer_body, parent, false);
                 break;
 
             default:
@@ -94,31 +95,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         @Nullable
-        @BindView(R.id.textView_hour)
-        TextView tvHour;
+        @BindView(R.id.numberPicker_hour)
+        NumberPicker npHour;
 
         @Nullable
-        @BindView(R.id.textView_min)
-        TextView tvMin;
+        @BindView(R.id.numberPicker_min)
+        NumberPicker npMin;
 
         @Nullable
-        @BindView(R.id.textView_sec)
-        TextView tvSec;
+        @BindView(R.id.numberPicker_sec)
+        NumberPicker npSec;
 
         @Nullable
-        @BindView(R.id.textView_mSec)
-        TextView tvMSec;
-
-        @Nullable
-        @BindView(R.id.listView_stopwatch_lap)
+        @BindView(R.id.listView_timer_lap)
         ListView lvLapTime;
 
         @Nullable
-        @BindView(R.id.button_stopwatch_on_off)
+        @BindView(R.id.button_timer_on_off)
         Button btnOnOff;
 
         @Nullable
-        @BindView(R.id.button_stopwatch_reset_lap)
+        @BindView(R.id.button_timer_reset_lap)
         Button btnResetLap;
 
         public ViewHolder(View itemView) {
