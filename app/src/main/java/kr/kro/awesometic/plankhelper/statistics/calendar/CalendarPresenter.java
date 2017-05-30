@@ -1,5 +1,6 @@
 package kr.kro.awesometic.plankhelper.statistics.calendar;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
@@ -15,9 +16,28 @@ public class CalendarPresenter implements CalendarContract.Presenter {
     private final PlankLogsRepository mPlankLogsRepository;
     private final CalendarContract.View mCalendarView;
 
+    private RecyclerViewAdapter mRecyclerViewAdapter;
+    private Context mApplicationContext;
+
     @Override
     public void start() {
+        initPresenter();
+        initView();
+    }
 
+    private void initPresenter() {
+        mApplicationContext = (Context) mCalendarView.getApplicationContext();
+    }
+
+    private void initView() {
+        mCalendarView.showLoading();
+
+        mRecyclerViewAdapter = new RecyclerViewAdapter();
+        mCalendarView.setRecyclerViewAdapter(mRecyclerViewAdapter);
+
+        mRecyclerViewAdapter.setPlankLogs(null);
+
+        mCalendarView.showCalendar();
     }
 
     public CalendarPresenter(@NonNull PlankLogsRepository plankLogsRepository,
@@ -26,5 +46,10 @@ public class CalendarPresenter implements CalendarContract.Presenter {
         mCalendarView = checkNotNull(stopwatchView, "calendarView cannot be null");
 
         mCalendarView.setPresenter(this);
+    }
+
+    @Override
+    public void bindViewsFromViewHolderToFrag() {
+        mCalendarView.bindViewsFromViewHolder();
     }
 }

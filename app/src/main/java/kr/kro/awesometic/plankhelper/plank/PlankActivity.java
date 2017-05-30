@@ -65,7 +65,6 @@ public class PlankActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(pagerAdapter.getCount());
 
         mMaterialViewPager.getPagerTitleStrip().setViewPager(viewPager);
-
         mMaterialViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
             @Override
             public HeaderDesign getHeaderDesign(int page) {

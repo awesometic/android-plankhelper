@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:viewpager_pagerTitleStrip="@layout/plank_materialviewpager_tab"
-        app:viewpager_logo="@layout/header_logo"
+        app:viewpager_logo="@layout/plank_materialviewpager_header_logo"
         app:viewpager_logoMarginTop="100dp"
         app:viewpager_color="@color/colorPrimaryDarkUser"
         app:viewpager_headerHeight="200dp"
