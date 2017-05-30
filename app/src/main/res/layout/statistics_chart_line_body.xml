@@ -5,9 +5,9 @@
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/statistics_chart_line_card_view"
+        android:id="@+id/statistics_chart_line_cardview_body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:layout_margin="10dp"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="2dp">
@@ -17,28 +17,27 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/statistics_chart_line_text_view_datetime"
+                android:id="@+id/statistics_chart_line_textview_datetime"
                 android:layout_width="match_parent"
                 android:layout_height="30dp" />
 
             <TextView
-                android:id="@+id/statistics_chart_line_text_view_duration"
+                android:id="@+id/statistics_chart_line_textview_duration"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_below="@id/statistics_chart_line_text_view_datetime" />
+                android:layout_below="@id/statistics_chart_line_textview_datetime" />
 
             <TextView
-                android:id="@+id/statistics_chart_line_text_view_lap_count"
+                android:id="@+id/statistics_chart_line_textview_lap_count"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_below="@id/statistics_chart_line_text_view_duration" />
+                android:layout_below="@id/statistics_chart_line_textview_duration" />
 
             <TextView
-                android:id="@+id/statistics_chart_line_text_view_method"
+                android:id="@+id/statistics_chart_line_textview_method"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:layout_below="@id/statistics_chart_line_text_view_lap_count" />
-
+                android:layout_below="@id/statistics_chart_line_textview_lap_count" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

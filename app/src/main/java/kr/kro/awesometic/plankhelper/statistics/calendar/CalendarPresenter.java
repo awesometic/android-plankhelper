@@ -19,6 +19,14 @@ public class CalendarPresenter implements CalendarContract.Presenter {
     private RecyclerViewAdapter mRecyclerViewAdapter;
     private Context mApplicationContext;
 
+    public CalendarPresenter(@NonNull PlankLogsRepository plankLogsRepository,
+                              @NonNull CalendarContract.View stopwatchView) {
+        mPlankLogsRepository = checkNotNull(plankLogsRepository, "plankLogsRepository cannot be null");
+        mCalendarView = checkNotNull(stopwatchView, "calendarView cannot be null");
+
+        mCalendarView.setPresenter(this);
+    }
+
     @Override
     public void start() {
         initPresenter();
@@ -38,14 +46,6 @@ public class CalendarPresenter implements CalendarContract.Presenter {
         mRecyclerViewAdapter.setPlankLogs(null);
 
         mCalendarView.showCalendar();
-    }
-
-    public CalendarPresenter(@NonNull PlankLogsRepository plankLogsRepository,
-                              @NonNull CalendarContract.View stopwatchView) {
-        mPlankLogsRepository = checkNotNull(plankLogsRepository, "plankLogsRepository cannot be null");
-        mCalendarView = checkNotNull(stopwatchView, "calendarView cannot be null");
-
-        mCalendarView.setPresenter(this);
     }
 
     @Override

@@ -19,8 +19,6 @@ import kr.kro.awesometic.plankhelper.data.PlankLog;
 import kr.kro.awesometic.plankhelper.util.Constants;
 import kr.kro.awesometic.plankhelper.util.Singleton;
 import kr.kro.awesometic.plankhelper.util.TimeUtils;
-import lecho.lib.hellocharts.formatter.AxisValueFormatter;
-import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -54,7 +52,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD : Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY;
+        switch (position) {
+            case 0:
+                return Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD;
+            default:
+                return Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY;
+        }
     }
 
     @Override
@@ -69,7 +72,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY:
                 view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.statistics_chart_line_body_item, parent, false);
+                        .inflate(R.layout.statistics_chart_line_body, parent, false);
                 break;
 
             default:
@@ -82,9 +85,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.d(Constants.LOG_TAG, getClass().toString() + " position: " + position);
-        Log.d(Constants.LOG_TAG, getClass().toString() + " this week: " + daysOfWeek.toString());
-
         switch (getItemViewType(position)) {
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD:
                 for (int i = 1; i < mPlankLogs.size(); i++) {
@@ -199,19 +199,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         @Nullable
-        @BindView(R.id.statistics_chart_line_text_view_datetime)
+        @BindView(R.id.statistics_chart_line_textview_datetime)
         TextView mDatetimeTextView;
 
         @Nullable
-        @BindView(R.id.statistics_chart_line_text_view_duration)
+        @BindView(R.id.statistics_chart_line_textview_duration)
         TextView mDurationTextView;
 
         @Nullable
-        @BindView(R.id.statistics_chart_line_text_view_lap_count)
+        @BindView(R.id.statistics_chart_line_textview_lap_count)
         TextView mLapCountTextView;
 
         @Nullable
-        @BindView(R.id.statistics_chart_line_text_view_method)
+        @BindView(R.id.statistics_chart_line_textview_method)
         TextView mMethodTextView;
 
         @Nullable

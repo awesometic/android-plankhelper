@@ -11,6 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ViewAnimator;
+
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
+import kr.kro.awesometic.plankhelper.util.Constants;
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.Line;
@@ -40,11 +45,17 @@ public class ChartFragment extends Fragment implements ChartContract.View {
     private ChartContract.Presenter mPresenter;
     private Context mContext;
 
-    @BindView(R.id.statistics_chart_line_recycler_view)
-    RecyclerView mRecyclerView;
+    @BindView(R.id.statistics_chart_frag_animator)
+    ViewAnimator mViewAnimator;
+
+    // ButterKnife 가 아니라 mViewAnimator 에 의해 초기화 됨
+    private RecyclerView mRecyclerView;
 
     private RecyclerView.Adapter mRecyclerViewAdapter;
-    private RecyclerView.LayoutManager mRecyclerViewLayoutManager;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private boolean mIsViewsBound;
+    private LineChartView mLineChartView;
 
     public ChartFragment() {
 
@@ -63,6 +74,7 @@ public class ChartFragment extends Fragment implements ChartContract.View {
         super.onCreate(savedInstanceState);
 
         mContext = getActivity().getApplicationContext();
+        mIsViewsBound = false;
     }
 
     @Nullable
@@ -71,29 +83,71 @@ public class ChartFragment extends Fragment implements ChartContract.View {
         View rootView = inflater.inflate(R.layout.statistics_chart_frag, container, false);
         ButterKnife.bind(this, rootView);
 
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerViewLayoutManager = new LinearLayoutManager(mContext);
-        mRecyclerView.setLayoutManager(mRecyclerViewLayoutManager);
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(Constants.COMMON_ANIMATOR_POSITION.RECYCLERVIEW);
 
         return rootView;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
 
         mPresenter.start();
     }
 
     @Override
-    public void onDestroy() {
+    public void onResume() {
+        super.onResume();
+    }
 
+    @Override
+    public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void showLoading() {
+        mViewAnimator.setDisplayedChild(Constants.COMMON_ANIMATOR_POSITION.LOADING);
+    }
+
+    @Override
+    public void showChart() {
+        mViewAnimator.setDisplayedChild(Constants.COMMON_ANIMATOR_POSITION.RECYCLERVIEW);
+    }
+
+    @Override
+    public Object getApplicationContext() {
+        return mContext;
     }
 
     @Override
     public void setRecyclerViewAdapter(Object recyclerViewAdapter) {
         mRecyclerViewAdapter = (RecyclerViewAdapter) recyclerViewAdapter;
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (!mIsViewsBound) {
+                    mPresenter.bindViewsFromViewHolderToFrag();
+
+                    mIsViewsBound = true;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void bindViewsFromViewHolder() {
+        RecyclerViewAdapter.ViewHolder holder = (RecyclerViewAdapter.ViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
+
+        if (holder.getItemViewType() == Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD) {
+
+        }
     }
 }
