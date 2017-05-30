@@ -17,7 +17,7 @@
         app:viewpager_logoMarginTop="100dp"
         app:viewpager_color="@color/colorPrimaryDarkUser"
         app:viewpager_headerHeight="200dp"
-        app:viewpager_headerAlpha="0.5"
+        app:viewpager_headerAlpha="0.3"
         app:viewpager_hideLogoWithFade="false"
         app:viewpager_hideToolbarAndTitle="true"
         app:viewpager_enableToolbarElevation="true"
