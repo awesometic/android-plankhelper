@@ -10,12 +10,17 @@ import kr.kro.awesometic.plankhelper.BaseView;
 public interface LogContract {
 
     interface View extends BaseView<Presenter> {
-        Object getActivityContext();
 
-        void setPlankLogAdapter(Object plankLogAdapter);
+        void showLoading();
+        void showLog();
+
+        Object getApplicationContext();
+        void setRecyclerViewAdapter(Object recyclerViewAdapter);
+
+        void bindViewsFromViewHolder();
     }
 
     interface Presenter extends BasePresenter {
-
+        void bindViewsFromViewHolderToFrag();
     }
 }
