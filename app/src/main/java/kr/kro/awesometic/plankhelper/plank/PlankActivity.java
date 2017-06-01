@@ -72,11 +72,11 @@ public class PlankActivity extends AppCompatActivity {
                     case 0:
                         return HeaderDesign.fromColorResAndDrawable(
                                 R.color.plankHeaderDefault,
-                                new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.plank_stopwatch_header_image)));
+                                getDrawable(R.drawable.plank_stopwatch_header_image));
                     case 1:
                         return HeaderDesign.fromColorResAndDrawable(
                                 R.color.plankHeaderDefault,
-                                new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.plank_timer_header_image)));
+                                getDrawable(R.drawable.plank_timer_header_image));
                 }
 
                 //execute others actions if needed (ex : modify your header logo)
