@@ -1,13 +1,11 @@
 package kr.kro.awesometic.plankhelper.plank;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -67,19 +65,18 @@ public class PlankActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(pagerAdapter.getCount());
 
         mMaterialViewPager.getPagerTitleStrip().setViewPager(viewPager);
-
         mMaterialViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
             @Override
             public HeaderDesign getHeaderDesign(int page) {
                 switch (page) {
                     case 0:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.green,
-                                "http://phandroid.s3.amazonaws.com/wp-content/uploads/2014/06/android_google_moutain_google_now_1920x1080_wallpaper_Wallpaper-HD_2560x1600_www.paperhi.com_-640x400.jpg");
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.plankHeaderDefault,
+                                new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.plank_stopwatch_header_image)));
                     case 1:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.blue,
-                                "http://www.hdiphonewallpapers.us/phone-wallpapers/540x960-1/540x960-mobile-wallpapers-hd-2218x5ox3.jpg");
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.plankHeaderDefault,
+                                new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.plank_timer_header_image)));
                 }
 
                 //execute others actions if needed (ex : modify your header logo)

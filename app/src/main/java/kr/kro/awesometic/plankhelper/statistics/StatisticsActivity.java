@@ -1,8 +1,9 @@
 package kr.kro.awesometic.plankhelper.statistics;
 
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -11,10 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.header.HeaderDesign;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
-import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
-import kr.kro.awesometic.plankhelper.data.source.local.PlankLogsLocalDataSource;
-import kr.kro.awesometic.plankhelper.util.ActivityUtils;
 
 /**
  * Created by Awesometic on 2017-04-17.
@@ -22,26 +25,51 @@ import kr.kro.awesometic.plankhelper.util.ActivityUtils;
 
 public class StatisticsActivity extends AppCompatActivity {
 
+    @BindView(R.id.statistics_materialViewPager)
+    MaterialViewPager mMaterialViewPager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statistics_act);
+        ButterKnife.bind(this);
 
-        // toolbar 설정
-        Toolbar toolbar = (Toolbar) findViewById(R.id.statistics_toolbar);
+        Toolbar toolbar = mMaterialViewPager.getToolbar();
         setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_24dp);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // view pager 설정
-        ViewPager viewPager = (ViewPager) findViewById(R.id.statistics_view_pager);
         PagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), StatisticsActivity.this);
+        ViewPager viewPager = mMaterialViewPager.getViewPager();
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(pagerAdapter.getCount());
 
-        // tab layout 설정
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.statistics_tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
+        mMaterialViewPager.getPagerTitleStrip().setViewPager(viewPager);
+        mMaterialViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.plankHeaderDefault,
+                                new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.plank_stopwatch_header_image)));
+                    case 1:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.plankHeaderDefault,
+                                new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.plank_timer_header_image)));
+                    case 2:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.plankHeaderDefault,
+                                new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.plank_stopwatch_header_image)));
+                }
+
+                //execute others actions if needed (ex : modify your header logo)
+
+                return null;
+            }
+        });
     }
 
     @Override

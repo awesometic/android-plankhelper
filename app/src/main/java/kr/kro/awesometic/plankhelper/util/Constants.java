@@ -81,15 +81,10 @@ public class Constants {
         int TYPE_HEAD =  0;
         int TYPE_BODY = 1;
     }
-
-    public interface PLANK_STOPWATCH_RCV_TAGS {
-        int TV_HOUR = 0;
-        int TV_MIN = 1;
-        int TV_SEC = 2;
-        int TV_MSEC = 3;
-        int LV_LAPTIME = 4;
-        int BTN_ONOFF = 5;
-        int BTN_RESETLAP = 6;
+    
+    public interface COMMON_ANIMATOR_POSITION {
+        int RECYCLERVIEW = 0;
+        int LOADING = 1;
     }
 
     public interface DATABASE {

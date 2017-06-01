@@ -11,9 +11,17 @@ public interface CalendarContract {
 
     interface View extends BaseView<Presenter> {
 
+        void showLoading();
+        void showCalendar();
+
+        Object getApplicationContext();
+        void setRecyclerViewAdapter(Object recyclerViewAdapter);
+
+        void bindViewsFromViewHolder();
     }
 
     interface Presenter extends BasePresenter {
 
+        void bindViewsFromViewHolderToFrag();
     }
 }

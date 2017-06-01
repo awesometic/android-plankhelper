@@ -12,6 +12,7 @@ import kr.kro.awesometic.plankhelper.data.LapTime;
 import kr.kro.awesometic.plankhelper.data.PlankLog;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsDataSource;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
+import kr.kro.awesometic.plankhelper.plank.stopwatch.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,8 +25,8 @@ public class LogPresenter implements LogContract.Presenter {
     private final PlankLogsRepository mPlankLogsRepository;
     private final LogContract.View mLogView;
 
-    private LogListViewAdapter mLogListViewAdapter;
-    private Context mActivityContext;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
+    private Context mApplicationContext;
 
     public LogPresenter(@NonNull PlankLogsRepository plankLogsRepository,
                              @NonNull LogContract.View stopwatchView) {
@@ -37,19 +38,25 @@ public class LogPresenter implements LogContract.Presenter {
 
     @Override
     public void start() {
-        initStatisticsPresenter();
-        initStatisticsView();
+        initPresenter();
+        initView();
 
         loadAllPlankLogs();
     }
 
-    private void initStatisticsPresenter() {
-        mActivityContext = (Context) mLogView.getActivityContext();
+    private void initPresenter() {
+        mApplicationContext = (Context) mLogView.getApplicationContext();
     }
 
-    private void initStatisticsView() {
-        mLogListViewAdapter = new LogListViewAdapter(mActivityContext);
-        mLogView.setPlankLogAdapter(mLogListViewAdapter);
+    private void initView() {
+        mLogView.showLoading();
+
+        mRecyclerViewAdapter = new RecyclerViewAdapter();
+        mLogView.setRecyclerViewAdapter(mRecyclerViewAdapter);
+
+        mRecyclerViewAdapter.setPlankLogs(null);
+
+        mLogView.showLog();
     }
 
     private void loadAllPlankLogs() {
@@ -63,14 +70,14 @@ public class LogPresenter implements LogContract.Presenter {
                         public void onLapTimesLoaded(List<LapTime> lapTimes) {
                             plankLog.setLapTimes((ArrayList<LapTime>) lapTimes);
 
-                            mLogListViewAdapter.addItem(plankLog);
-                            mLogListViewAdapter.notifyDataSetChanged();
+                            mRecyclerViewAdapter.addPlankLog(plankLog);
+                            mRecyclerViewAdapter.notifyDataSetChanged();
                         }
 
                         @Override
                         public void onDataNotAvailable() {
-                            mLogListViewAdapter.addItem(plankLog);
-                            mLogListViewAdapter.notifyDataSetChanged();
+                            mRecyclerViewAdapter.addPlankLog(plankLog);
+                            mRecyclerViewAdapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -78,8 +85,13 @@ public class LogPresenter implements LogContract.Presenter {
 
             @Override
             public void onDataNotAvailable() {
-                Toast.makeText(mActivityContext.getApplicationContext(), mActivityContext.getString(R.string.statistics_no_data), Toast.LENGTH_SHORT).show();
+                
             }
         });
+    }
+
+    @Override
+    public void bindViewsFromViewHolderToFrag() {
+        mLogView.bindViewsFromViewHolder();
     }
 }

@@ -50,11 +50,9 @@ public class TimerFragment extends Fragment implements TimerContract.View {
 
     // ButterKnife 가 아니라 mViewAnimator 에 의해 초기화 됨
     private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     private LapTimeListViewAdapter mLapTimeListViewAdapter;
-
-    private RecyclerView.Adapter mRecyclerViewAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private boolean mIsViewsBound;
     private NumberPicker npHour;
@@ -93,6 +91,19 @@ public class TimerFragment extends Fragment implements TimerContract.View {
 
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(ANIMATOR_POSITION_LIST);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (!mIsViewsBound) {
+                    mPresenter.bindViewsFromViewHolderToFrag();
+
+                    mIsViewsBound = true;
+                }
+            }
+        });
 
         return rootView;
     }
@@ -140,23 +151,7 @@ public class TimerFragment extends Fragment implements TimerContract.View {
 
     @Override
     public void setRecyclerViewAdapter(Object recyclerViewAdapter) {
-        mRecyclerViewAdapter = (RecyclerViewAdapter) recyclerViewAdapter;
-        mRecyclerView.setAdapter(mRecyclerViewAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
-
-        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (!mIsViewsBound) {
-                    mPresenter.bindViewsFromViewHolderToFrag();
-
-                    mIsViewsBound = true;
-                }
-            }
-        });
+        mRecyclerView.setAdapter((RecyclerViewAdapter) recyclerViewAdapter);
     }
 
     @Override

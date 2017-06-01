@@ -11,10 +11,16 @@ public interface ChartContract {
 
     interface View extends BaseView<Presenter> {
 
+        void showLoading();
+        void showChart();
+
+        Object getApplicationContext();
         void setRecyclerViewAdapter(Object recyclerViewAdapter);
+
+        void bindViewsFromViewHolder();
     }
 
     interface Presenter extends BasePresenter {
-
+        void bindViewsFromViewHolderToFrag();
     }
 }
