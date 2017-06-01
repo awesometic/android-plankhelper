@@ -35,8 +35,6 @@ public class LogFragment extends Fragment implements LogContract.View {
     ViewAnimator mViewAnimator;
 
     private RecyclerView mRecyclerView;
-
-    private RecyclerView.Adapter mRecyclerViewAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private boolean mIsViewsBound;
@@ -69,6 +67,19 @@ public class LogFragment extends Fragment implements LogContract.View {
 
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(Constants.COMMON_ANIMATOR_POSITION.RECYCLERVIEW);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (!mIsViewsBound) {
+                    mPresenter.bindViewsFromViewHolderToFrag();
+
+                    mIsViewsBound = true;
+                }
+            }
+        });
 
         return rootView;
     }
@@ -107,23 +118,7 @@ public class LogFragment extends Fragment implements LogContract.View {
 
     @Override
     public void setRecyclerViewAdapter(Object recyclerViewAdapter) {
-        mRecyclerViewAdapter = (RecyclerViewAdapter) recyclerViewAdapter;
-        mRecyclerView.setAdapter(mRecyclerViewAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
-
-        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (!mIsViewsBound) {
-                    mPresenter.bindViewsFromViewHolderToFrag();
-
-                    mIsViewsBound = true;
-                }
-            }
-        });
+        mRecyclerView.setAdapter((RecyclerViewAdapter) recyclerViewAdapter);
     }
 
     @Override
