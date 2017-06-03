@@ -29,7 +29,8 @@
 
         </activity>
         <activity
-            android:name=".settings.license.LicenseActivity">
+            android:name=".settings.license.LicenseActivity"
+            android:parentActivityName=".settings.SettingsActivity">
 
         </activity>
         <service

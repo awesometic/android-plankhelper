@@ -45,8 +45,8 @@
             android:summary="@string/settings_app_opensource_summary">
 
             <intent android:action="android.intent.action.VIEW"
-                android:targetPackage="kr.kro.awesometic.settings.license"
-                android:targetClass="kr.kro.awesometic.settings.license.LicenseActivity" />
+                android:targetPackage="kr.kro.awesometic.plankhelper"
+                android:targetClass="kr.kro.awesometic.plankhelper.settings.license.LicenseActivity" />
         </PreferenceScreen>
 
         <ListPreference
