@@ -60,12 +60,13 @@
     <string name="settings_app_category">어플리케이션 정보</string>
     <string name="settings_app_feedback_title">메일 보내기</string>
     <string name="settings_app_feedback_summary">궁금한 점이나 개선할 점들을 개발자에게 메일로 보내세요.</string>
-    <string name="settings_app_author_title">Awesometic</string>
-    <string name="settings_app_author_latest_patch_date">2017.06.03</string>
-    <string name="settings_app_author_github_title">GitHub</string>
-    <string name="settings_app_author_github_summary">누르면 GitHub 저장소로 이동합니다.</string>
+    <string name="settings_app_github_title">GitHub</string>
+    <string name="settings_app_github_summary">누르면 GitHub 저장소로 이동합니다.</string>
     <string name="settings_app_opensource_title">오픈소스 라이선스</string>
     <string name="settings_app_opensource_summary">오픈소스 라이선스를 열람합니다.</string>
+    <string name="settings_author_category">제작자 정보</string>
+    <string name="settings_author_title">Awesometic</string>
+    <string name="settings_author_email"><!-- Not available for now --></string>
 
     <string name="settings_app_opensource_license_butterknife">\n<b>ButterKnife</b>\n
 Copyright 2013 Jake Wharton\n
