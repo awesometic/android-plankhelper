@@ -1,6 +1,7 @@
 package kr.kro.awesometic.plankhelper.plank;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.PersistableBundle;
@@ -11,10 +12,12 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.github.florent37.materialviewpager.MaterialViewPager;
@@ -40,6 +43,8 @@ public class PlankActivity extends AppCompatActivity {
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
 
+    private ActionBarDrawerToggle mDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +68,24 @@ public class PlankActivity extends AppCompatActivity {
         ViewPager viewPager = mMaterialViewPager.getViewPager();
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(pagerAdapter.getCount());
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
+                R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
+        ) {
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         mMaterialViewPager.getPagerTitleStrip().setViewPager(viewPager);
         mMaterialViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
@@ -106,7 +129,21 @@ public class PlankActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
@@ -127,6 +164,7 @@ public class PlankActivity extends AppCompatActivity {
 
                         switch (menuItem.getItemId()) {
                             case R.id.plank_navigation_menu_item:
+                                menuItem.setChecked(true);
                                 break;
                             case R.id.statistics_navigation_menu_item:
                                 intent = new Intent(PlankActivity.this, StatisticsActivity.class);
@@ -141,7 +179,6 @@ public class PlankActivity extends AppCompatActivity {
                                 break;
                         }
 
-                        menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
                         return true;
                     }

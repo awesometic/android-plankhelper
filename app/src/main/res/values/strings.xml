@@ -3,6 +3,8 @@
     <string name="app_loading">로딩...</string>
 
     <string name="navigation_view_header_title">플랭크 헬퍼</string>
+    <string name="navigation_drawer_open">네비게이션 드로어를 엽니다.</string>
+    <string name="navigation_drawer_close">네비게이션 드로어를 닫습니다.</string>
     <string name="plank_title">플랭크</string>
     <string name="statistics_title">통계</string>
     <string name="settings_title">설정</string>
