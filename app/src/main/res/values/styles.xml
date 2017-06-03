@@ -58,8 +58,8 @@
     </style>
 
     <style name="PreferenceLocalTheme" parent="PreferenceThemeOverlay">
-        <item name="android:textColorPrimary">@color/colorPrimaryDarkUser</item>
-        <item name="android:textColorSecondary">@color/colorPrimaryUser</item>
+        <item name="android:textColorPrimary">@color/pref_primary_text_color_selector</item>
+        <item name="android:textColorSecondary">@color/pref_secondary_text_color_selector</item>
         <item name="android:textColorTertiary">@color/colorAccent</item>
     </style>
 
