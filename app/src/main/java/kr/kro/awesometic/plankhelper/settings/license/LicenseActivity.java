@@ -41,8 +41,6 @@ public class LicenseActivity extends AppCompatActivity {
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_materialcalendarview));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_advancedrecyclerview));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_hellochart));
-
-        tvLicense.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
 
     @Override
