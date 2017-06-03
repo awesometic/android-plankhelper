@@ -48,4 +48,22 @@
     <string name="statistics_chart_title">차트</string>
     <string name="statistics_log_title">기록</string>
     <string name="statistics_no_data">플랭크 기록이 없습니다.</string>
+
+    <string name="settings_schedule_category">예약</string>
+    <string name="settings_schedule_on_title">지정된 시간에 자동 알림</string>
+    <string name="settings_schedule_on_summary_on">매일 플랭크 알림을 띄웁니다.</string>
+    <string name="settings_schedule_on_summary_off">매일 플랭크 알림을 띄우지 않습니다.</string>
+    <string name="settings_schedule_start_time_title">알림이 뜰 시간 설정</string>
+    <string name="settings_schedule_start_time_summary">00:00</string>
+    <string name="settings_schedule_end_time_title">알림이 지워질 시간 설정</string>
+    <string name="settings_schedule_end_time_summary">23:59</string>
+    <string name="settings_app_category">어플리케이션 정보</string>
+    <string name="settings_app_feedback_title">메일 보내기</string>
+    <string name="settings_app_feedback_summary">궁금한 점이나 개선할 점들을 개발자에게 메일로 보내세요.</string>
+    <string name="settings_app_author_title">Awesometic</string>
+    <string name="settings_app_author_latest_patch_date">2017.06.03</string>
+    <string name="settings_app_author_github_title">GitHub</string>
+    <string name="settings_app_author_github_summary">누르면 GitHub 저장소로 이동합니다.</string>
+    <string name="settings_app_opensource_title">오픈소스 라이선스</string>
+    <string name="settings_app_opensource_summary">오픈소스 라이선스를 열람합니다.</string>
 </resources>

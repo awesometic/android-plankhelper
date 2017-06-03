@@ -28,6 +28,10 @@
             android:parentActivityName=".plank.PlankActivity">
 
         </activity>
+        <activity
+            android:name=".settings.license.LicenseActivity">
+
+        </activity>
         <service
             android:name=".plankservice.PlankService"
             android:exported="true"
@@ -48,7 +52,6 @@
                 <action android:name="kr.kro.awesometic.plankhelper.NOTI_ACTION_TIMER_LAP" />
                 <action android:name="kr.kro.awesometic.plankhelper.NOTI_ACTION_TIMER_RESET" />
             </intent-filter>
-
         </service>
 
     </application>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:style="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/settings_schedule_category">
+
+        <SwitchPreferenceCompat
+            android:key="@string/pref_schedule_switch"
+            android:title="@string/settings_schedule_on_title"
+            android:summaryOn="@string/settings_schedule_on_summary_on"
+            android:summaryOff="@string/settings_schedule_on_summary_off"
+            android:defaultValue="false"/>
+        <kr.kro.awesometic.plankhelper.settings.time.TimePreference
+            style="@style/AppTheme.DialogPreference"
+            android:dependency="@string/pref_schedule_switch"
+            android:key="@string/pref_schedule_start_time"
+            android:title="@string/settings_schedule_start_time_title"
+            android:summary="@string/settings_schedule_start_time_summary"
+            android:defaultValue="0"
+            />
+        <kr.kro.awesometic.plankhelper.settings.time.TimePreference
+            style="@style/AppTheme.DialogPreference"
+            android:dependency="@string/pref_schedule_switch"
+            android:key="@string/pref_schedule_end_time"
+            android:title="@string/settings_schedule_end_time_title"
+            android:summary="@string/settings_schedule_end_time_summary"
+            android:defaultValue="0"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_app_category">
+
+        <PreferenceScreen
+            android:title="@string/settings_app_author_github_title"
+            android:summary="@string/settings_app_author_github_summary">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://github.com/awesometic/plank_helper" />
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:title="@string/settings_app_opensource_title"
+            android:summary="@string/settings_app_opensource_summary">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:targetPackage="kr.kro.awesometic.settings.license"
+                android:targetClass="kr.kro.awesometic.settings.license.LicenseActivity" />
+        </PreferenceScreen>
+
+        <ListPreference
+            android:title="@string/settings_app_author_title"
+            android:summary="@string/settings_app_author_latest_patch_date"
+            android:enabled="false"/>
+    </PreferenceCategory>
+</PreferenceScreen>

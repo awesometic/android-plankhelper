@@ -24,6 +24,11 @@
         <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
 
+        <!-- Preference Theme -->
+        <item name="preferenceTheme">@style/PreferenceLocalTheme</item>
+
+        <!-- Theme for all Alert Dialogs (e.g. from DialogPreference) -->
+        <item name="alertDialogTheme">@style/AppAlertDialog</item>
     </style>
 
     <style name="AppTheme.ActionBarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
@@ -42,5 +47,36 @@
 
     <style name="DrawerTheme" parent="AppTheme">
         <item name="android:textColorPrimary">@color/NavigationDrawerPrimaryColor</item>
+    </style>
+
+    <!-- Preference Theme -->
+    <style name="AppTheme.ActionBarTheme.Settings" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <!-- White arrow -->
+        <item name="colorControlNormal">@android:color/white</item>
+
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <style name="PreferenceLocalTheme" parent="PreferenceThemeOverlay">
+        <item name="android:textColorPrimary">@color/colorPrimaryDarkUser</item>
+        <item name="android:textColorSecondary">@color/colorPrimaryUser</item>
+        <item name="android:textColorTertiary">@color/colorAccent</item>
+    </style>
+
+    <!-- Style for a DialogPreference Entry -->
+    <style name="AppTheme.DialogPreference">
+        <item name="positiveButtonText">@android:string/ok</item>
+        <item name="negativeButtonText">@android:string/cancel</item>
+    </style>
+
+    <!-- Theme for all Alert Dialogs (e.g. from DialogPreference) -->
+    <style name="AppAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <!-- To tint the buttons -->
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppAlertDialogContent" parent="Theme.AppCompat.Light">
+        <!-- To tint the buttons -->
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 </resources>

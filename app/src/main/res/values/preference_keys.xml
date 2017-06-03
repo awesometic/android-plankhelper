@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_schedule_switch" translatable="false">pref_schedule_switch</string>
+    <string name="pref_schedule_start_time" translatable="false">pref_schedule_start_time</string>
+    <string name="pref_schedule_end_time" translatable="false">pref_schedule_end_time</string>
+</resources>
