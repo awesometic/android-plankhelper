@@ -59,6 +59,14 @@
     <string name="settings_schedule_start_time_summary">00:00</string>
     <string name="settings_schedule_end_time_title">알림이 지워질 시간 설정</string>
     <string name="settings_schedule_end_time_summary">23:59</string>
+
+    <string name="settings_timer_category">타이머</string>
+    <string name="settings_timer_vibrate_switch_title">진동으로 알림</string>
+    <string name="settings_timer_vibrate_switch_summary_on">타이머가 종료되기 전 진동으로 알립니다.</string>
+    <string name="settings_timer_vibrate_switch_summary_off">타이머가 종료되기 전 진동으로 알리지 않습니다.</string>
+    <string name="settings_timer_vibrate_remaining_time_title">진동으로 알릴 순간 설정 (초)</string>
+    <string name="settings_timer_vibrate_remaining_time_summary">0</string>
+
     <string name="settings_app_category">어플리케이션 정보</string>
     <string name="settings_app_feedback_title">메일 보내기</string>
     <string name="settings_app_feedback_summary">궁금한 점이나 개선할 점들을 개발자에게 메일로 보내세요.</string>
@@ -66,6 +74,7 @@
     <string name="settings_app_github_summary">누르면 GitHub 저장소로 이동합니다.</string>
     <string name="settings_app_opensource_title">오픈소스 라이선스</string>
     <string name="settings_app_opensource_summary">오픈소스 라이선스를 열람합니다.</string>
+
     <string name="settings_author_category">제작자 정보</string>
     <string name="settings_author_title">Awesometic</string>
     <string name="settings_author_email"><!-- Not available for now --></string>

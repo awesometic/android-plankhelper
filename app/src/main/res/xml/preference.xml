@@ -11,7 +11,7 @@
             android:summaryOn="@string/settings_schedule_on_summary_on"
             android:summaryOff="@string/settings_schedule_on_summary_off"
             android:layout="@layout/settings_pref_item_layout"
-            android:defaultValue="false"/>
+            android:defaultValue="false" />
         <kr.kro.awesometic.plankhelper.settings.time.TimePreference
             style="@style/AppTheme.DialogPreference"
             android:dependency="@string/pref_schedule_switch"
@@ -28,6 +28,23 @@
             android:summary="@string/settings_schedule_end_time_summary"
             android:layout="@layout/settings_pref_item_layout"
             />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_timer_category">
+
+        <SwitchPreferenceCompat
+            android:key="@string/pref_timer_vibrate_switch"
+            android:title="@string/settings_timer_vibrate_switch_title"
+            android:summaryOn="@string/settings_timer_vibrate_switch_summary_on"
+            android:summaryOff="@string/settings_timer_vibrate_switch_summary_off"
+            android:layout="@layout/settings_pref_item_layout"
+            android:defaultValue="false" />
+        <EditTextPreference
+            android:dependency="@string/pref_timer_vibrate_switch"
+            android:title="@string/settings_timer_vibrate_remaining_time_title"
+            android:summary="@string/settings_timer_vibrate_remaining_time_summary"
+            android:layout="@layout/settings_pref_item_layout" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -56,10 +73,9 @@
     <PreferenceCategory
         android:title="@string/settings_author_category">
 
-        <ListPreference
+        <PreferenceScreen
             android:title="@string/settings_author_title"
             android:summary="@string/settings_author_email"
-            android:layout="@layout/settings_pref_item_layout"
-            android:enabled="false"/>
+            android:layout="@layout/settings_pref_item_layout" />
     </PreferenceCategory>
 </PreferenceScreen>
