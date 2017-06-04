@@ -10,7 +10,7 @@
             android:title="@string/settings_schedule_on_title"
             android:summaryOn="@string/settings_schedule_on_summary_on"
             android:summaryOff="@string/settings_schedule_on_summary_off"
-            android:layout="@layout/settings_pref_item_layout"
+            android:layout="@layout/settings_pref_item"
             android:defaultValue="false" />
         <kr.kro.awesometic.plankhelper.settings.time.TimePreference
             style="@style/AppTheme.DialogPreference"
@@ -18,7 +18,7 @@
             android:key="@string/pref_schedule_start_time"
             android:title="@string/settings_schedule_start_time_title"
             android:summary="@string/settings_schedule_start_time_summary"
-            android:layout="@layout/settings_pref_item_layout"
+            android:layout="@layout/settings_pref_item"
             />
         <kr.kro.awesometic.plankhelper.settings.time.TimePreference
             style="@style/AppTheme.DialogPreference"
@@ -26,7 +26,7 @@
             android:key="@string/pref_schedule_end_time"
             android:title="@string/settings_schedule_end_time_title"
             android:summary="@string/settings_schedule_end_time_summary"
-            android:layout="@layout/settings_pref_item_layout"
+            android:layout="@layout/settings_pref_item"
             />
     </PreferenceCategory>
 
@@ -38,13 +38,13 @@
             android:title="@string/settings_timer_vibrate_switch_title"
             android:summaryOn="@string/settings_timer_vibrate_switch_summary_on"
             android:summaryOff="@string/settings_timer_vibrate_switch_summary_off"
-            android:layout="@layout/settings_pref_item_layout"
+            android:layout="@layout/settings_pref_item"
             android:defaultValue="false" />
         <EditTextPreference
             android:dependency="@string/pref_timer_vibrate_switch"
             android:title="@string/settings_timer_vibrate_remaining_time_title"
             android:summary="@string/settings_timer_vibrate_remaining_time_summary"
-            android:layout="@layout/settings_pref_item_layout" />
+            android:layout="@layout/settings_pref_item" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -53,7 +53,7 @@
         <PreferenceScreen
             android:title="@string/settings_app_github_title"
             android:summary="@string/settings_app_github_summary"
-            android:layout="@layout/settings_pref_item_layout">
+            android:layout="@layout/settings_pref_item">
 
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://github.com/awesometic/plank_helper" />
@@ -62,7 +62,7 @@
         <PreferenceScreen
             android:title="@string/settings_app_opensource_title"
             android:summary="@string/settings_app_opensource_summary"
-            android:layout="@layout/settings_pref_item_layout">
+            android:layout="@layout/settings_pref_item">
 
             <intent android:action="android.intent.action.VIEW"
                 android:targetPackage="kr.kro.awesometic.plankhelper"
@@ -76,6 +76,6 @@
         <PreferenceScreen
             android:title="@string/settings_author_title"
             android:summary="@string/settings_author_email"
-            android:layout="@layout/settings_pref_item_layout" />
+            android:layout="@layout/settings_pref_item" />
     </PreferenceCategory>
 </PreferenceScreen>
