@@ -5,11 +5,14 @@ package kr.kro.awesometic.plankhelper.settings.time;
  */
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 
 import kr.kro.awesometic.plankhelper.R;
+import kr.kro.awesometic.plankhelper.util.SharedPreferenceManager;
+import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
 /**
  * A Preference to select a specific Time with a {@link android.widget.TimePicker}.
@@ -71,6 +74,8 @@ public class TimePreference extends DialogPreference {
 
         // Save to SharedPreference
         persistInt(time);
+
+        setSummary(TimeUtils.minToTimeFormat(time));
     }
 
     //

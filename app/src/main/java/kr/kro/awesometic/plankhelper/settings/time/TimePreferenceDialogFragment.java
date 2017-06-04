@@ -4,6 +4,7 @@ package kr.kro.awesometic.plankhelper.settings.time;
  * Created by Awesometic on 2017-06-03.
  */
 
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.preference.DialogPreference;
@@ -11,15 +12,19 @@ import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import java.sql.Time;
 
 import kr.kro.awesometic.plankhelper.R;
+import kr.kro.awesometic.plankhelper.util.SharedPreferenceManager;
 
 /**
  * The Dialog for the {@link TimePreference}.
  *
  * @author Jakob Ulbrich
  */
-public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat {
+public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat implements DialogInterface.OnClickListener {
 
     /**
      * The TimePicker widget
@@ -84,7 +89,21 @@ public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat
     @Override
     public void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            // Get the current values from the TimePicker
+
+        }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        DialogPreference preference = getPreference();
+        if (preference instanceof TimePreference) {
+            TimePreference timePreference = (TimePreference) getPreference();
+            String dialogTitleStartTime = getContext().getResources().getString(R.string.settings_schedule_start_time_title);
+            String dialogTitleEndTime = getContext().getResources().getString(R.string.settings_schedule_end_time_title);
+
+            int previousStartTimeMin = SharedPreferenceManager.read(SharedPreferenceManager.PREF_SCHEDULE_START_TIME, 0);
+            int previousEndTimeMin = SharedPreferenceManager.read(SharedPreferenceManager.PREF_SCHEDULE_END_TIME, 0);
+
             int hours;
             int minutes;
             if (Build.VERSION.SDK_INT >= 23) {
@@ -95,19 +114,43 @@ public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat
                 minutes = mTimePicker.getCurrentMinute();
             }
 
-            // Generate value to save
             int minutesAfterMidnight = (hours * 60) + minutes;
 
-            // Save the value
-            DialogPreference preference = getPreference();
-            if (preference instanceof TimePreference) {
-                TimePreference timePreference = ((TimePreference) preference);
-                // This allows the client to ignore the user value.
+            if (which == dialog.BUTTON_POSITIVE
+                    && timePreference.getDialogTitle().equals(dialogTitleEndTime)
+                    && previousStartTimeMin > minutesAfterMidnight) {
+
+                Toast.makeText(
+                        getContext(),
+                        getContext().getResources().getString(R.string.settings_error_end_time_invalid),
+                        Toast.LENGTH_LONG
+                ).show();
+
+            } else if (which == dialog.BUTTON_POSITIVE
+                    && timePreference.getDialogTitle().equals(dialogTitleStartTime)
+                    && previousEndTimeMin > minutesAfterMidnight) {
+
+                Toast.makeText(
+                        getContext(),
+                        getContext().getResources().getString(R.string.settings_error_start_earlier_than_end),
+                        Toast.LENGTH_LONG
+                ).show();
+
+                TimePreference endTimePreference = (TimePreference) timePreference.getPreferenceManager().findPreference(SharedPreferenceManager.PREF_SCHEDULE_END_TIME);
+                if (endTimePreference.callChangeListener(minutesAfterMidnight + 60)) {
+                    endTimePreference.setTime(minutesAfterMidnight + 60);
+                }
+
                 if (timePreference.callChangeListener(minutesAfterMidnight)) {
-                    // Save the value
+                    timePreference.setTime(minutesAfterMidnight);
+                }
+            } else {
+                if (timePreference.callChangeListener(minutesAfterMidnight)) {
                     timePreference.setTime(minutesAfterMidnight);
                 }
             }
         }
+
+        super.onClick(dialog, which);
     }
 }

@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.settings.SettingsActivity;
 import kr.kro.awesometic.plankhelper.statistics.StatisticsActivity;
+import kr.kro.awesometic.plankhelper.util.SharedPreferenceManager;
 import kr.kro.awesometic.plankhelper.util.Singleton;
 
 public class PlankActivity extends AppCompatActivity {
@@ -50,6 +51,8 @@ public class PlankActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.plank_act);
         ButterKnife.bind(this);
+
+        SharedPreferenceManager.init(getApplicationContext());
 
         // 싱글톤 설정
         // 임시로 일요일(Calendar.SUNDAY)

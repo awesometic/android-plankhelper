@@ -17,7 +17,6 @@
             android:key="@string/pref_schedule_start_time"
             android:title="@string/settings_schedule_start_time_title"
             android:summary="@string/settings_schedule_start_time_summary"
-            android:defaultValue="0"
             />
         <kr.kro.awesometic.plankhelper.settings.time.TimePreference
             style="@style/AppTheme.DialogPreference"
@@ -25,7 +24,6 @@
             android:key="@string/pref_schedule_end_time"
             android:title="@string/settings_schedule_end_time_title"
             android:summary="@string/settings_schedule_end_time_summary"
-            android:defaultValue="0"
             />
     </PreferenceCategory>
 

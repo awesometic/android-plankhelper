@@ -60,6 +60,10 @@ public class TimeUtils {
         return String.format(Locale.getDefault(), "%02d:%02d:%02d.%03d", hour, minute, second, mSec % 1000);
     }
 
+    public static String minToTimeFormat(int min) {
+        return String.format(Locale.getDefault(), "%02d:%02d", min / 60, min % 60);
+    }
+
     public static List<Integer> getDaysOfCurrentWeek(int startOfTheWeek) {
         List<Integer> resultDays = new ArrayList<Integer>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd", Locale.getDefault());

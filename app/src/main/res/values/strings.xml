@@ -70,6 +70,9 @@
     <string name="settings_author_title">Awesometic</string>
     <string name="settings_author_email"><!-- Not available for now --></string>
 
+    <string name="settings_error_start_earlier_than_end">자동으로 지워질 시간을 뜰 시간보다 1시간 늦게 설정합니다.</string>
+    <string name="settings_error_end_time_invalid">지워질 시간은 알림이 뜰 시간보다 늦어야 합니다.</string>
+
     <string name="settings_app_opensource_license_butterknife">\n<b>ButterKnife</b>\n
 Copyright 2013 Jake Wharton\n
 \n
