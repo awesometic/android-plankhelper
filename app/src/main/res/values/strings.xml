@@ -82,7 +82,7 @@
     <string name="settings_error_start_earlier_than_end">자동으로 지워질 시간을 뜰 시간보다 1시간 늦게 설정합니다.</string>
     <string name="settings_error_end_time_invalid">지워질 시간은 알림이 뜰 시간보다 늦어야 합니다.</string>
 
-    <string name="settings_app_opensource_license_butterknife">\n<b>ButterKnife</b>\n
+    <string name="settings_app_opensource_license_butterknife" translatable="false">\n<b>ButterKnife</b>\n
 Copyright 2013 Jake Wharton\n
 \n
 Licensed under the Apache License, Version 2.0 (the "License");\n
@@ -98,7 +98,7 @@ See the License for the specific language governing permissions and\n
 limitations under the License.\n
 \n
     </string>
-    <string name="settings_app_opensource_license_materialviewpager">\n<b>MaterialViewPager</b>\n
+    <string name="settings_app_opensource_license_materialviewpager" translatable="false">\n<b>MaterialViewPager</b>\n
         Copyright 2015 florent37, Inc.\n
 \n
 Licensed under the Apache License, Version 2.0 (the "License");\n
@@ -114,7 +114,7 @@ See the License for the specific language governing permissions and\n
 limitations under the License.\n
 \n
     </string>
-    <string name="settings_app_opensource_license_materialcalendarview">\n<b>MaterialCalendarView</b>\n
+    <string name="settings_app_opensource_license_materialcalendarview" translatable="false">\n<b>MaterialCalendarView</b>\n
         Copyright 2017 Prolific Interactive\n
 \n
 Permission is hereby granted, free of charge, to any person obtaining a copy\n
@@ -136,7 +136,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n
 THE SOFTWARE.\n
 \n
     </string>
-    <string name="settings_app_opensource_license_advancedrecyclerview">\n<b>AdvancedRecyclerView</b>\n
+    <string name="settings_app_opensource_license_advancedrecyclerview" translatable="false">\n<b>AdvancedRecyclerView</b>\n
         Copyright 2015 Haruki Hasegawa\n
 \n
 Licensed under the Apache License, Version 2.0 (the "License");\n
@@ -152,7 +152,7 @@ See the License for the specific language governing permissions and\n
 limitations under the License.\n
 \n
     </string>
-    <string name="settings_app_opensource_license_hellochart">\n<b>HelloChart</b>\n
+    <string name="settings_app_opensource_license_hellochart" translatable="false">\n<b>HelloChart</b>\n
         Copyright 2014 Leszek Wach\n
 \n
 Licensed under the Apache License, Version 2.0 (the "License");\n
