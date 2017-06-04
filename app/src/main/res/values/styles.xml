@@ -79,4 +79,10 @@
         <!-- To tint the buttons -->
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <!-- CheckBox style -->
+    <style name="CheckBoxStyle" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorPrimaryUser</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
 </resources>

@@ -5,12 +5,13 @@
     <PreferenceCategory
         android:title="@string/settings_schedule_category">
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             android:key="@string/pref_schedule_switch"
             android:title="@string/settings_schedule_on_title"
             android:summaryOn="@string/settings_schedule_on_summary_on"
             android:summaryOff="@string/settings_schedule_on_summary_off"
             android:layout="@layout/settings_pref_item"
+            android:widgetLayout="@layout/settings_pref_checkbox"
             android:defaultValue="false" />
         <kr.kro.awesometic.plankhelper.settings.time.TimePreference
             style="@style/AppTheme.DialogPreference"
@@ -33,12 +34,13 @@
     <PreferenceCategory
         android:title="@string/settings_timer_category">
 
-        <SwitchPreferenceCompat
+        <CheckBoxPreference
             android:key="@string/pref_timer_vibrate_switch"
             android:title="@string/settings_timer_vibrate_switch_title"
             android:summaryOn="@string/settings_timer_vibrate_switch_summary_on"
             android:summaryOff="@string/settings_timer_vibrate_switch_summary_off"
             android:layout="@layout/settings_pref_item"
+            android:widgetLayout="@layout/settings_pref_checkbox"
             android:defaultValue="false" />
         <EditTextPreference
             android:dependency="@string/pref_timer_vibrate_switch"
