@@ -39,6 +39,7 @@ public class LicenseActivity extends AppCompatActivity {
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_butterknife));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_materialviewpager));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_materialcalendarview));
+        tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_materialdialogs));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_advancedrecyclerview));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_hellochart));
     }
