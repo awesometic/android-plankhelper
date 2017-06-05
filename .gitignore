@@ -132,3 +132,8 @@ google-services.json
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/androidstudio
+
+# by Awesometic
+.idea/copyright/
+.idea/markdown-navigator/
+.idea/markdown-navigator.xml
