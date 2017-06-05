@@ -24,7 +24,8 @@ import kr.kro.awesometic.plankhelper.util.SharedPreferenceManager;
  *
  * @author Jakob Ulbrich
  */
-public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat implements DialogInterface.OnClickListener {
+public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat
+        implements DialogInterface.OnClickListener {
 
     /**
      * The TimePicker widget
@@ -55,7 +56,7 @@ public class TimePreferenceDialogFragment extends PreferenceDialogFragmentCompat
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
 
-        mTimePicker = (TimePicker) view.findViewById(R.id.edit);
+        mTimePicker = (TimePicker) view.findViewById(R.id.settings_pref_dialog_widget_timePicker);
 
         // Exception: There is no TimePicker with the id 'edit' in the dialog.
         if (mTimePicker == null) {

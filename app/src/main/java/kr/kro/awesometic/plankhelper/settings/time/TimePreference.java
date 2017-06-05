@@ -5,13 +5,11 @@ package kr.kro.awesometic.plankhelper.settings.time;
  */
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 
 import kr.kro.awesometic.plankhelper.R;
-import kr.kro.awesometic.plankhelper.util.SharedPreferenceManager;
 import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
 /**
@@ -29,7 +27,7 @@ public class TimePreference extends DialogPreference {
     /**
      * Resource of the dialog layout
      */
-    private int mDialogLayoutResId = R.layout.settings_dialog_time;
+    private int mDialogLayoutResId = R.layout.settings_pref_dialog_time;
 
     public TimePreference(Context context) {
         // Delegate to other constructor
