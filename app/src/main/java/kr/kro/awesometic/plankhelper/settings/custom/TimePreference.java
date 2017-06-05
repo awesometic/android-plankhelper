@@ -1,4 +1,4 @@
-package kr.kro.awesometic.plankhelper.settings.time;
+package kr.kro.awesometic.plankhelper.settings.custom;
 
 /**
  * Created by Awesometic on 2017-06-03.

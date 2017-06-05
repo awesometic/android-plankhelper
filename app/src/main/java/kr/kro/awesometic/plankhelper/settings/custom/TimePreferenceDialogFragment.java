@@ -1,4 +1,4 @@
-package kr.kro.awesometic.plankhelper.settings.time;
+package kr.kro.awesometic.plankhelper.settings.custom;
 
 /**
  * Created by Awesometic on 2017-06-03.
@@ -13,8 +13,6 @@ import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
-import java.sql.Time;
 
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.util.SharedPreferenceManager;

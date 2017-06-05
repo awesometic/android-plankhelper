@@ -1,4 +1,4 @@
-package kr.kro.awesometic.plankhelper.settings.time;
+package kr.kro.awesometic.plankhelper.settings.custom;
 
 import android.content.Context;
 import android.content.res.TypedArray;

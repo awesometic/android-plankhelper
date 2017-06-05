@@ -1,4 +1,4 @@
-package kr.kro.awesometic.plankhelper.settings.time;
+package kr.kro.awesometic.plankhelper.settings.custom;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,11 +8,8 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import java.util.Locale;
@@ -20,7 +17,6 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
-import kr.kro.awesometic.plankhelper.util.Constants;
 import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
 /**

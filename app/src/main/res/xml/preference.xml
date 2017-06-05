@@ -13,7 +13,7 @@
             android:layout="@layout/settings_pref_item"
             android:widgetLayout="@layout/settings_pref_checkbox"
             android:defaultValue="false" />
-        <kr.kro.awesometic.plankhelper.settings.time.TimePreference
+        <kr.kro.awesometic.plankhelper.settings.custom.TimePreference
             style="@style/AppTheme.DialogPreference"
             android:dependency="@string/pref_schedule_switch"
             android:key="@string/pref_schedule_start_time"
@@ -21,7 +21,7 @@
             android:summary="@string/settings_schedule_start_time_summary"
             android:layout="@layout/settings_pref_item"
             />
-        <kr.kro.awesometic.plankhelper.settings.time.TimePreference
+        <kr.kro.awesometic.plankhelper.settings.custom.TimePreference
             style="@style/AppTheme.DialogPreference"
             android:dependency="@string/pref_schedule_switch"
             android:key="@string/pref_schedule_end_time"
@@ -42,7 +42,7 @@
             android:layout="@layout/settings_pref_item"
             android:widgetLayout="@layout/settings_pref_checkbox"
             android:defaultValue="false" />
-        <kr.kro.awesometic.plankhelper.settings.time.NumberPickerPreference
+        <kr.kro.awesometic.plankhelper.settings.custom.NumberPickerPreference
             style="@style/AppTheme.DialogPreference"
             android:dependency="@string/pref_timer_vibrate_switch"
             android:key="@string/pref_timer_vibrate_remaining_time"

@@ -7,10 +7,10 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import kr.kro.awesometic.plankhelper.R;
-import kr.kro.awesometic.plankhelper.settings.time.NumberPickerPreference;
-import kr.kro.awesometic.plankhelper.settings.time.NumberPickerPreferenceDialogFragment;
-import kr.kro.awesometic.plankhelper.settings.time.TimePreference;
-import kr.kro.awesometic.plankhelper.settings.time.TimePreferenceDialogFragment;
+import kr.kro.awesometic.plankhelper.settings.custom.NumberPickerPreference;
+import kr.kro.awesometic.plankhelper.settings.custom.NumberPickerPreferenceDialogFragment;
+import kr.kro.awesometic.plankhelper.settings.custom.TimePreference;
+import kr.kro.awesometic.plankhelper.settings.custom.TimePreferenceDialogFragment;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
