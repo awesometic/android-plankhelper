@@ -42,8 +42,10 @@
             android:layout="@layout/settings_pref_item"
             android:widgetLayout="@layout/settings_pref_checkbox"
             android:defaultValue="false" />
-        <EditTextPreference
+        <kr.kro.awesometic.plankhelper.settings.time.NumberPickerPreference
+            style="@style/AppTheme.DialogPreference"
             android:dependency="@string/pref_timer_vibrate_switch"
+            android:key="@string/pref_timer_vibrate_remaining_time"
             android:title="@string/settings_timer_vibrate_remaining_time_title"
             android:summary="@string/settings_timer_vibrate_remaining_time_summary"
             android:layout="@layout/settings_pref_item" />

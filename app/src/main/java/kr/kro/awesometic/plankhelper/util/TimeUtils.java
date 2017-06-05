@@ -60,6 +60,14 @@ public class TimeUtils {
         return String.format(Locale.getDefault(), "%02d:%02d:%02d.%03d", hour, minute, second, mSec % 1000);
     }
 
+    public static String secToTimeFormat(int sec) {
+        int second = sec % 60;
+        int minute = (sec % (60 * 60)) / 60;
+        int hour = sec / (60 * 60);
+
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, minute, second);
+    }
+
     public static String minToTimeFormat(int min) {
         return String.format(Locale.getDefault(), "%02d:%02d", min / 60, min % 60);
     }

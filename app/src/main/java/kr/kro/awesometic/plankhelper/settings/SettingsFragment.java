@@ -7,6 +7,8 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import kr.kro.awesometic.plankhelper.R;
+import kr.kro.awesometic.plankhelper.settings.time.NumberPickerPreference;
+import kr.kro.awesometic.plankhelper.settings.time.NumberPickerPreferenceDialogFragment;
 import kr.kro.awesometic.plankhelper.settings.time.TimePreference;
 import kr.kro.awesometic.plankhelper.settings.time.TimePreferenceDialogFragment;
 
@@ -49,6 +51,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Settin
             // Create a new instance of TimePreferenceDialogFragment with the key of the related
             // Preference
             dialogFragment = TimePreferenceDialogFragment.newInstance(preference.getKey());
+        } else if (preference instanceof NumberPickerPreference) {
+            dialogFragment = NumberPickerPreferenceDialogFragment.newInstance(preference.getKey());
         }
 
         if (dialogFragment != null) {
