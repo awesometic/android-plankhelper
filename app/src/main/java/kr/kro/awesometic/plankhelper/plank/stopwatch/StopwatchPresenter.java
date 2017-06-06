@@ -55,27 +55,27 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
     private PlankService.IStopwatchCallback mCallback = new PlankService.IStopwatchCallback() {
         @Override
-        public void startFromNotification() {
+        public void startFromService() {
             stopwatchStart(Constants.CALLER.FROM_SERVICE);
         }
 
         @Override
-        public void pauseFromNotification() {
+        public void pauseFromService() {
             stopwatchPause(Constants.CALLER.FROM_SERVICE);
         }
 
         @Override
-        public void resumeFromNotification() {
+        public void resumeFromService() {
             stopwatchResume(Constants.CALLER.FROM_SERVICE);
         }
 
         @Override
-        public void resetFromNotification() {
+        public void resetFromService() {
             stopwatchReset(Constants.CALLER.FROM_SERVICE);
         }
 
         @Override
-        public void lapFromNotification(long passedMSec, long intervalMSec) {
+        public void lapFromService(long passedMSec, long intervalMSec) {
             addLapTimeItem(passedMSec, intervalMSec);
         }
 
@@ -96,7 +96,7 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
         }
 
         @Override
-        public void appExitFromNotification() {
+        public void appExitFromService() {
             appExit(Constants.CALLER.FROM_SERVICE);
         }
 
@@ -107,8 +107,11 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
         @Override
         public long getLastLapMSec() {
-            return TimeUtils.timeFormatToMSec(
-                    mLapTimeListViewAdapter.getItem(mLapTimeListViewAdapter.getCount() - 1).getPassedTime());
+            if (mLapTimeListViewAdapter.getCount() > 0)
+                return TimeUtils.timeFormatToMSec(
+                        mLapTimeListViewAdapter.getItem(mLapTimeListViewAdapter.getCount() - 1).getPassedTime());
+            else
+                return 0;
         }
     };
 

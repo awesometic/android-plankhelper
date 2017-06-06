@@ -52,29 +52,27 @@ public class PlankService extends Service {
 
     private Looper mUpdateDisplayLooper;
     private UpdateDisplayHandler mUpdateDisplayHandler;
-
-    private NotificationManager mNotificationManager;
+    
     private final BroadcastReceiver mNotificationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case Constants.BROADCAST_ACTION.STOPWATCH_READY: {
-                    mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    initNotification(Constants.WORK_METHOD.STOPWATCH);
+                    PlankNotificationManager.reset(getApplicationContext(), Constants.WORK_METHOD.STOPWATCH);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_START: {
-                    mStopwatchCallback.startFromNotification();
+                    mStopwatchCallback.startFromService();
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_START);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_PAUSE: {
-                    mStopwatchCallback.pauseFromNotification();
+                    mStopwatchCallback.pauseFromService();
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_PAUSE);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_RESUME: {
-                    mStopwatchCallback.resumeFromNotification();
+                    mStopwatchCallback.resumeFromService();
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_RESUME);
                     break;
                 }
@@ -83,13 +81,12 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_RESET: {
-                    mStopwatchCallback.resetFromNotification();
+                    mStopwatchCallback.resetFromService();
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_RESET);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_READY: {
-                    mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    initNotification(Constants.WORK_METHOD.TIMER);
+                    PlankNotificationManager.reset(getApplicationContext(), Constants.WORK_METHOD.TIMER);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_START: {
@@ -101,18 +98,18 @@ public class PlankService extends Service {
                         startPlankActivityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(startPlankActivityIntent);
                     } else {
-                        mTimerCallback.startFromNotification();
+                        mTimerCallback.startFromService();
                         timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_START);
                     }
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_PAUSE: {
-                    mTimerCallback.pauseFromNotification();
+                    mTimerCallback.pauseFromService();
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_PAUSE);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_RESUME: {
-                    mTimerCallback.resumeFromNotification();
+                    mTimerCallback.resumeFromService();
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_RESUME);
                     break;
                 }
@@ -121,7 +118,7 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_RESET: {
-                    mTimerCallback.resetFromNotification();
+                    mTimerCallback.resetFromService();
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_RESET);
                     break;
                 }
@@ -134,9 +131,10 @@ public class PlankService extends Service {
                         mTimerTaskIntervalMSec = 0;
                         mIsTimerTaskRunning = false;
 
-                        mStopwatchCallback.resetFromNotification();
+                        mStopwatchCallback.resetFromService();
                         mStopwatchCallback.updateDisplay(mTimerTaskMSec);
-                        initNotification(Constants.WORK_METHOD.NOTIFICATION_READY);
+                        
+                        PlankNotificationManager.reset(getApplicationContext(), Constants.WORK_METHOD.NOTIFICATION_READY);
                     }
                     break;
                 }
@@ -144,7 +142,7 @@ public class PlankService extends Service {
                     // It doesn't need to be separated into each mode.
                     // So it calls one's method for exit
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.APP_EXIT);
-                    mStopwatchCallback.appExitFromNotification();
+                    mStopwatchCallback.appExitFromService();
                     break;
                 }
                 default:
@@ -154,13 +152,13 @@ public class PlankService extends Service {
     };
 
     public interface IStopwatchCallback {
-        void startFromNotification();
-        void pauseFromNotification();
-        void resumeFromNotification();
-        void resetFromNotification();
-        void lapFromNotification(long passedMSec, long intervalMSec);
+        void startFromService();
+        void pauseFromService();
+        void resumeFromService();
+        void resetFromService();
+        void lapFromService(long passedMSec, long intervalMSec);
         void updateDisplay(long mSec);
-        void appExitFromNotification();
+        void appExitFromService();
 
         void setWidgetsEnabled(boolean isEnabled);
 
@@ -169,14 +167,14 @@ public class PlankService extends Service {
     }
 
     public interface ITimerCallback {
-        void startFromNotification();
-        void pauseFromNotification();
-        void resumeFromNotification();
-        void resetFromNotification();
-        void lapFromNotification(long passedMSec, long intervalMSec);
+        void startFromService();
+        void pauseFromService();
+        void resumeFromService();
+        void resetFromService();
+        void lapFromService(long passedMSec, long intervalMSec);
         void updateDisplay(long mSec);
         void resetDisplay();
-        void appExitFromNotification();
+        void appExitFromService();
 
         void setWidgetsEnabled(boolean isEnabled);
 
@@ -211,9 +209,16 @@ public class PlankService extends Service {
 
                             mTimerTaskMSec++;
                             mTimerTaskIntervalMSec++;
-
-                            final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(method);
-                            updateNotification(notificationBuilder, method);
+                            
+                            PlankNotificationManager.update(
+                                    getApplicationContext(),
+                                    Constants.WORK_METHOD.STOPWATCH,
+                                    mTimerTaskMSec,
+                                    mTimerTaskIntervalMSec,
+                                    mStopwatchCallback.getLastLapMSec(),
+                                    mStopwatchCallback.getLapCount(),
+                                    mIsTimerTaskRunning
+                            );
                             mTimer = new Timer();
                             mTimer.scheduleAtFixedRate(new TimerTask() {
                                 @Override
@@ -222,7 +227,15 @@ public class PlankService extends Service {
                                     mTimerTaskIntervalMSec++;
 
                                     if (mTimerTaskMSec % 1000 == 0) {
-                                        updateNotification(notificationBuilder, method);
+                                        PlankNotificationManager.update(
+                                                getApplicationContext(),
+                                                Constants.WORK_METHOD.STOPWATCH,
+                                                mTimerTaskMSec,
+                                                mTimerTaskIntervalMSec,
+                                                mStopwatchCallback.getLastLapMSec(),
+                                                mStopwatchCallback.getLapCount(),
+                                                mIsTimerTaskRunning
+                                        );
                                     }
                                 }
                             }, 0, 1);
@@ -234,8 +247,15 @@ public class PlankService extends Service {
                             mTimerStartTimeMSec = mTimerCallback.getStartTimeMSec();
                             mTimerTaskMSec = mTimerStartTimeMSec;
 
-                            final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(method);
-                            updateNotification(notificationBuilder, method);
+                            PlankNotificationManager.update(
+                                    getApplicationContext(),
+                                    Constants.WORK_METHOD.TIMER,
+                                    mTimerTaskMSec,
+                                    mTimerTaskIntervalMSec,
+                                    mTimerCallback.getLastLapMSec(),
+                                    mTimerCallback.getLapCount(),
+                                    mIsTimerTaskRunning
+                            );
                             mTimer = new Timer();
                             mTimer.scheduleAtFixedRate(new TimerTask() {
                                 @Override
@@ -243,7 +263,7 @@ public class PlankService extends Service {
                                     if (mTimerTaskMSec == 0) {
                                         mStopwatchCallback.setWidgetsEnabled(true);
 
-                                        resetNotification(method);
+                                        resetService(method);
                                         mTimerCallback.timerCompleteFromService();
                                     } else {
                                         mTimerTaskMSec--;
@@ -251,7 +271,15 @@ public class PlankService extends Service {
 
                                         if (mTimerTaskMSec % 1000 == 0) {
                                             mTimerCallback.updateDisplay(mTimerTaskMSec);
-                                            updateNotification(notificationBuilder, method);
+                                            PlankNotificationManager.update(
+                                                    getApplicationContext(),
+                                                    Constants.WORK_METHOD.TIMER,
+                                                    mTimerTaskMSec,
+                                                    mTimerTaskIntervalMSec,
+                                                    mTimerCallback.getLastLapMSec(),
+                                                    mTimerCallback.getLapCount(),
+                                                    mIsTimerTaskRunning
+                                            );
                                         }
                                     }
                                 }
@@ -272,8 +300,15 @@ public class PlankService extends Service {
 
                     mTimer.cancel();
 
-                    NotificationCompat.Builder notificationBuilder = getNotificationBuilder(method);
-                    updateNotification(notificationBuilder, method);
+                    PlankNotificationManager.update(
+                            getApplicationContext(),
+                            method,
+                            mTimerTaskMSec,
+                            mTimerTaskIntervalMSec,
+                            mTimerCallback.getLastLapMSec(),
+                            mTimerCallback.getLapCount(),
+                            mIsTimerTaskRunning
+                    );
 
                     break;
                 }
@@ -283,8 +318,15 @@ public class PlankService extends Service {
 
                     switch (method) {
                         case Constants.WORK_METHOD.STOPWATCH: {
-                            final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(method);
-                            updateNotification(notificationBuilder, method);
+                            PlankNotificationManager.update(
+                                    getApplicationContext(),
+                                    Constants.WORK_METHOD.STOPWATCH,
+                                    mTimerTaskMSec,
+                                    mTimerTaskIntervalMSec,
+                                    mStopwatchCallback.getLastLapMSec(),
+                                    mStopwatchCallback.getLapCount(),
+                                    mIsTimerTaskRunning
+                            );
                             mTimer = new Timer();
                             mTimer.scheduleAtFixedRate(new TimerTask() {
                                 @Override
@@ -293,21 +335,36 @@ public class PlankService extends Service {
                                     mTimerTaskIntervalMSec++;
 
                                     if (mTimerTaskMSec % 1000 == 0) {
-                                        updateNotification(notificationBuilder, method);
+                                        PlankNotificationManager.update(
+                                                getApplicationContext(),
+                                                Constants.WORK_METHOD.STOPWATCH,
+                                                mTimerTaskMSec,
+                                                mTimerTaskIntervalMSec,
+                                                mStopwatchCallback.getLastLapMSec(),
+                                                mStopwatchCallback.getLapCount(),
+                                                mIsTimerTaskRunning
+                                        );
                                     }
                                 }
                             }, 0, 1);
                             break;
                         }
                         case Constants.WORK_METHOD.TIMER: {
-                            final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(method);
-                            updateNotification(notificationBuilder, method);
+                            PlankNotificationManager.update(
+                                    getApplicationContext(),
+                                    Constants.WORK_METHOD.TIMER,
+                                    mTimerTaskMSec,
+                                    mTimerTaskIntervalMSec,
+                                    mTimerCallback.getLastLapMSec(),
+                                    mTimerCallback.getLapCount(),
+                                    mIsTimerTaskRunning
+                            );
                             mTimer = new Timer();
                             mTimer.scheduleAtFixedRate(new TimerTask() {
                                 @Override
                                 public void run() {
                                     if (mTimerTaskMSec == 0) {
-                                        resetNotification(method);
+                                        resetService(method);
                                         mTimerCallback.timerCompleteFromService();
                                     } else {
                                         mTimerTaskMSec--;
@@ -315,7 +372,15 @@ public class PlankService extends Service {
 
                                         if (mTimerTaskMSec % 1000 == 0) {
                                             mTimerCallback.updateDisplay(mTimerTaskMSec);
-                                            updateNotification(notificationBuilder, method);
+                                            PlankNotificationManager.update(
+                                                    getApplicationContext(),
+                                                    Constants.WORK_METHOD.TIMER,
+                                                    mTimerTaskMSec,
+                                                    mTimerTaskIntervalMSec,
+                                                    mTimerCallback.getLastLapMSec(),
+                                                    mTimerCallback.getLapCount(),
+                                                    mIsTimerTaskRunning
+                                            );
                                         }
                                     }
                                 }
@@ -333,16 +398,14 @@ public class PlankService extends Service {
                 case Constants.SERVICE_WHAT.STOPWATCH_RESET: {
                     mTimerCallback.setWidgetsEnabled(true);
 
-                    resetNotification(method);
-
+                    resetService(method);
                     mStopwatchCallback.updateDisplay(mTimerTaskMSec);
                     break;
                 }
                 case Constants.SERVICE_WHAT.TIMER_RESET: {
                     mStopwatchCallback.setWidgetsEnabled(true);
 
-                    resetNotification(method);
-
+                    resetService(method);
                     mTimerCallback.resetDisplay();
                     break;
                 }
@@ -350,10 +413,10 @@ public class PlankService extends Service {
                 case Constants.SERVICE_WHAT.TIMER_LAP: {
                     switch (method) {
                         case Constants.WORK_METHOD.STOPWATCH:
-                            mStopwatchCallback.lapFromNotification(mTimerTaskMSec, mTimerTaskIntervalMSec);
+                            mStopwatchCallback.lapFromService(mTimerTaskMSec, mTimerTaskIntervalMSec);
                             break;
                         case Constants.WORK_METHOD.TIMER:
-                            mTimerCallback.lapFromNotification(mTimerTaskMSec, mTimerTaskIntervalMSec);
+                            mTimerCallback.lapFromService(mTimerTaskMSec, mTimerTaskIntervalMSec);
                             break;
 
                         default:
@@ -452,10 +515,7 @@ public class PlankService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        startForeground(
-                Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                getNotificationBuilder(Constants.WORK_METHOD.NOTIFICATION_READY).build());
-
+        PlankNotificationManager.setNotificationForeground(this, true);
         mIsTimerTaskRunning = false;
 
         return mBinder;
@@ -493,296 +553,7 @@ public class PlankService extends Service {
         }
     }
 
-    private NotificationCompat.Builder getNotificationBuilder(int method) {
-        Intent notificationIntent = new Intent(this, PlankActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_timer_white_48dp)
-                .setContentIntent(pendingIntent)
-                .setOngoing(true);
-
-        switch (method) {
-            case Constants.WORK_METHOD.NOTIFICATION_READY: {
-                notificationBuilder
-                        .setContentTitle(getString(R.string.notification_ready_title))
-                        .setContentText(getString(R.string.notification_ready_text))
-                        .addAction(getNotificationAction(Constants.SERVICE_WHAT.STOPWATCH_READY))
-                        .addAction(getNotificationAction(Constants.SERVICE_WHAT.TIMER_READY))
-                        .addAction(getNotificationAction(Constants.SERVICE_WHAT.APP_EXIT));
-                break;
-            }
-            case Constants.WORK_METHOD.STOPWATCH: {
-                notificationBuilder
-                        .setContentText(TimeUtils.mSecToTimeFormat(mTimerTaskMSec).substring(0, 8));
-                if (mIsTimerTaskRunning)
-                    notificationBuilder
-                            .setContentTitle(getString(R.string.plank_stopwatch_notification_title_ongoing))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.STOPWATCH_PAUSE))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.STOPWATCH_LAP))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.NOTIFICATION_READY));
-                else if (mTimerTaskMSec == 0)
-                    notificationBuilder
-                            .setContentTitle(getString(R.string.plank_stopwatch_notification_title_ready))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.STOPWATCH_START))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.STOPWATCH_RESET))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.NOTIFICATION_READY));
-                else
-                    notificationBuilder
-                            .setContentTitle(getString(R.string.plank_stopwatch_notification_title_ongoing))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.STOPWATCH_RESUME))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.STOPWATCH_RESET))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.NOTIFICATION_READY));
-                break;
-            }
-            case Constants.WORK_METHOD.TIMER: {
-                notificationBuilder
-                        .setContentText(TimeUtils.mSecToTimeFormat(mTimerTaskMSec).substring(0, 8));
-                if (mIsTimerTaskRunning)
-                    notificationBuilder
-                            .setContentTitle(getString(R.string.plank_timer_notification_title_ongoing))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.TIMER_PAUSE))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.TIMER_LAP))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.NOTIFICATION_READY));
-                else if (mTimerTaskMSec == 0)
-                    notificationBuilder
-                            .setContentTitle(getString(R.string.plank_timer_notification_title_ready))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.TIMER_START))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.TIMER_RESET))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.NOTIFICATION_READY));
-                else
-                    notificationBuilder
-                            .setContentTitle(getString(R.string.plank_timer_notification_title_ongoing))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.TIMER_RESUME))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.TIMER_RESET))
-                            .addAction(getNotificationAction(Constants.SERVICE_WHAT.NOTIFICATION_READY));
-                break;
-            }
-            default:
-                break;
-        }
-
-        return notificationBuilder;
-    }
-
-    @Nullable
-    private NotificationCompat.Action getNotificationAction(int what) {
-        Intent intent = new Intent();
-        PendingIntent pendingIntent;
-
-        switch (what) {
-            case Constants.SERVICE_WHAT.STOPWATCH_READY: {
-                intent.setAction(Constants.BROADCAST_ACTION.STOPWATCH_READY);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_stopwatch),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.STOPWATCH_START: {
-                intent.setAction(Constants.BROADCAST_ACTION.STOPWATCH_START);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_stopwatch_start),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.STOPWATCH_PAUSE: {
-                intent.setAction(Constants.BROADCAST_ACTION.STOPWATCH_PAUSE);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_pause),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.STOPWATCH_RESUME: {
-                intent.setAction(Constants.BROADCAST_ACTION.STOPWATCH_RESUME);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_resume),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.STOPWATCH_LAP: {
-                intent.setAction(Constants.BROADCAST_ACTION.STOPWATCH_LAP);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_lap),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.STOPWATCH_RESET: {
-                intent.setAction(Constants.BROADCAST_ACTION.STOPWATCH_RESET);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_reset),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.TIMER_READY: {
-                intent.setAction(Constants.BROADCAST_ACTION.TIMER_READY);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_timer),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.TIMER_START: {
-                intent.setAction(Constants.BROADCAST_ACTION.TIMER_START);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_timer_start),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.TIMER_PAUSE: {
-                intent.setAction(Constants.BROADCAST_ACTION.TIMER_PAUSE);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_pause),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.TIMER_RESUME: {
-                intent.setAction(Constants.BROADCAST_ACTION.TIMER_RESUME);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_resume),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.TIMER_LAP: {
-                intent.setAction(Constants.BROADCAST_ACTION.TIMER_LAP);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_lap),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.TIMER_RESET: {
-                intent.setAction(Constants.BROADCAST_ACTION.TIMER_RESET);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_reset),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.NOTIFICATION_READY: {
-                intent.setAction(Constants.BROADCAST_ACTION.NOTIFICATION_READY);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_go_to_ready),
-                        pendingIntent)
-                        .build();
-            }
-            case Constants.SERVICE_WHAT.APP_EXIT: {
-                intent.setAction(Constants.BROADCAST_ACTION.APP_EXIT);
-                pendingIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                return new NotificationCompat.Action.Builder(
-                        R.drawable.ic_timer_white_48dp,
-                        getString(R.string.notification_app_exit),
-                        pendingIntent)
-                        .build();
-            }
-            default:
-                return null;
-        }
-    }
-
-    private void initNotification(int method) {
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        switch (method) {
-            case Constants.WORK_METHOD.NOTIFICATION_READY:
-                mNotificationManager.notify(
-                        Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        getNotificationBuilder(Constants.WORK_METHOD.NOTIFICATION_READY).build());
-                break;
-            case Constants.WORK_METHOD.STOPWATCH:
-                mNotificationManager.notify(
-                        Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        getNotificationBuilder(Constants.WORK_METHOD.STOPWATCH).build());
-                break;
-            case Constants.WORK_METHOD.TIMER:
-                mNotificationManager.notify(
-                        Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        getNotificationBuilder(Constants.WORK_METHOD.TIMER).build());
-                break;
-        }
-    }
-
-    private void updateNotification(NotificationCompat.Builder notificationBuilder, int method) {
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        switch (method) {
-            case Constants.WORK_METHOD.STOPWATCH: {
-                if (mStopwatchCallback.getLapCount() > 0) {
-                    mNotificationManager.notify(
-                            Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                            notificationBuilder.setContentText(
-                                    TimeUtils.mSecToTimeFormat(mTimerTaskMSec).substring(0, 8) +
-                                            " - " + TimeUtils.mSecToTimeFormat(mTimerTaskIntervalMSec).substring(0, 8) +
-                                            " - " + TimeUtils.mSecToTimeFormat(mStopwatchCallback.getLastLapMSec()).substring(0, 8) +
-                                            " (" + mStopwatchCallback.getLapCount() + ")").build());
-                } else {
-                    mNotificationManager.notify(
-                            Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                            notificationBuilder.setContentText(TimeUtils.mSecToTimeFormat(mTimerTaskMSec).substring(0, 8)).build());
-                }
-                break;
-            }
-            case Constants.WORK_METHOD.TIMER: {
-                if (mTimerCallback.getLapCount() > 0) {
-                    mNotificationManager.notify(
-                            Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                            notificationBuilder.setContentText(
-                                    TimeUtils.mSecToTimeFormat(mTimerTaskMSec).substring(0, 8) +
-                                            " - " + TimeUtils.mSecToTimeFormat(mTimerTaskIntervalMSec).substring(0, 8) +
-                                            " - " + TimeUtils.mSecToTimeFormat(mTimerCallback.getLastLapMSec()).substring(0, 8) +
-                                            " (" + mTimerCallback.getLapCount() + ")").build());
-                } else {
-                    mNotificationManager.notify(
-                            Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                            notificationBuilder.setContentText(TimeUtils.mSecToTimeFormat(mTimerTaskMSec).substring(0, 8)).build());
-                }
-                break;
-            }
-
-            default:
-                break;
-        }
-
-    }
-
-    private void resetNotification(int method) {
+    private void resetService(int method) {
         if (mIsTimerTaskRunning) {
             mTimer.cancel();
         }
@@ -792,6 +563,6 @@ public class PlankService extends Service {
         mTimerStartTimeMSec = 0;
         mIsTimerTaskRunning = false;
 
-        initNotification(method);
+        PlankNotificationManager.reset(getApplicationContext(), method);
     }
 }

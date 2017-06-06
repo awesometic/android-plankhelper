@@ -52,27 +52,27 @@ public class TimerPresenter implements  TimerContract.Presenter {
 
     private PlankService.ITimerCallback mCallback = new PlankService.ITimerCallback() {
         @Override
-        public void startFromNotification() {
+        public void startFromService() {
             timerStart(Constants.CALLER.FROM_SERVICE);
         }
 
         @Override
-        public void pauseFromNotification() {
+        public void pauseFromService() {
             timerPause(Constants.CALLER.FROM_SERVICE);
         }
 
         @Override
-        public void resumeFromNotification() {
+        public void resumeFromService() {
             timerResume(Constants.CALLER.FROM_SERVICE);
         }
 
         @Override
-        public void resetFromNotification() {
+        public void resetFromService() {
             timerReset(Constants.CALLER.FROM_SERVICE);
         }
 
         @Override
-        public void lapFromNotification(long passedMSec, long intervalMSec) {
+        public void lapFromService(long passedMSec, long intervalMSec) {
             addLapTimeItem(passedMSec, intervalMSec);
         }
 
@@ -98,7 +98,7 @@ public class TimerPresenter implements  TimerContract.Presenter {
         }
 
         @Override
-        public void appExitFromNotification() {
+        public void appExitFromService() {
             appExit(Constants.CALLER.FROM_SERVICE);
         }
         
@@ -109,8 +109,11 @@ public class TimerPresenter implements  TimerContract.Presenter {
 
         @Override
         public long getLastLapMSec() {
-            return TimeUtils.timeFormatToMSec(
-                    mLapTimeListViewAdapter.getItem(mLapTimeListViewAdapter.getCount() - 1).getPassedTime());
+            if (mLapTimeListViewAdapter.getCount() > 0)
+                return TimeUtils.timeFormatToMSec(
+                        mLapTimeListViewAdapter.getItem(mLapTimeListViewAdapter.getCount() - 1).getPassedTime());
+            else
+                return 0;
         }
 
         @Override
