@@ -414,9 +414,27 @@ public class PlankService extends Service {
                     switch (method) {
                         case Constants.WORK_METHOD.STOPWATCH:
                             mStopwatchCallback.lapFromService(mTimerTaskMSec, mTimerTaskIntervalMSec);
+                            PlankNotificationManager.update(
+                                    getApplicationContext(),
+                                    Constants.WORK_METHOD.STOPWATCH,
+                                    mTimerTaskMSec,
+                                    mTimerTaskIntervalMSec,
+                                    mStopwatchCallback.getLastLapMSec(),
+                                    mStopwatchCallback.getLapCount(),
+                                    mIsTimerTaskRunning
+                            );
                             break;
                         case Constants.WORK_METHOD.TIMER:
                             mTimerCallback.lapFromService(mTimerTaskMSec, mTimerTaskIntervalMSec);
+                            PlankNotificationManager.update(
+                                    getApplicationContext(),
+                                    Constants.WORK_METHOD.TIMER,
+                                    mTimerTaskMSec,
+                                    mTimerTaskIntervalMSec,
+                                    mStopwatchCallback.getLastLapMSec(),
+                                    mStopwatchCallback.getLapCount(),
+                                    mIsTimerTaskRunning
+                            );
                             break;
 
                         default:
