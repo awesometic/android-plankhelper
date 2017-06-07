@@ -1,7 +1,5 @@
 package kr.kro.awesometic.plankhelper.plankservice;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,8 +12,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Timer;
@@ -24,7 +21,6 @@ import java.util.TimerTask;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.plank.PlankActivity;
 import kr.kro.awesometic.plankhelper.util.Constants;
-import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
 /**
  * Created by Awesometic on 2017-04-22.
@@ -52,7 +48,26 @@ public class PlankService extends Service {
 
     private Looper mUpdateDisplayLooper;
     private UpdateDisplayHandler mUpdateDisplayHandler;
-    
+
+    public interface IPlankCallback {
+        void start(int method);
+        void pause(int method);
+        void resume(int method);
+        void reset(int method);
+        void lap(int method, long passedTime, long intervalTime);
+
+        void updateViews(int method, long mSec);
+        void plankComplete(int method);
+
+        long getStartTimeMSec(int method);
+
+        int getLapCount(int method);
+        long getLastLapMSec(int method);
+
+        void appExit();
+    }
+    private IPlankCallback mPlankCallback;
+
     private final BroadcastReceiver mNotificationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -62,17 +77,17 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_START: {
-                    mStopwatchCallback.startFromService();
+                    mPlankCallback.start(Constants.WORK_METHOD.STOPWATCH);
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_START);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_PAUSE: {
-                    mStopwatchCallback.pauseFromService();
+                    mPlankCallback.pause(Constants.WORK_METHOD.STOPWATCH);
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_PAUSE);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_RESUME: {
-                    mStopwatchCallback.resumeFromService();
+                    mPlankCallback.resume(Constants.WORK_METHOD.STOPWATCH);
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_RESUME);
                     break;
                 }
@@ -81,7 +96,7 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_RESET: {
-                    mStopwatchCallback.resetFromService();
+                    mPlankCallback.reset(Constants.WORK_METHOD.STOPWATCH);
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_RESET);
                     break;
                 }
@@ -98,18 +113,18 @@ public class PlankService extends Service {
                         startPlankActivityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(startPlankActivityIntent);
                     } else {
-                        mTimerCallback.startFromService();
+                        mPlankCallback.start(Constants.WORK_METHOD.TIMER);
                         timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_START);
                     }
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_PAUSE: {
-                    mTimerCallback.pauseFromService();
+                    mPlankCallback.pause(Constants.WORK_METHOD.TIMER);
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_PAUSE);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_RESUME: {
-                    mTimerCallback.resumeFromService();
+                    mPlankCallback.resume(Constants.WORK_METHOD.TIMER);
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_RESUME);
                     break;
                 }
@@ -118,7 +133,7 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_RESET: {
-                    mTimerCallback.resetFromService();
+                    mPlankCallback.reset(Constants.WORK_METHOD.TIMER);
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_RESET);
                     break;
                 }
@@ -131,18 +146,14 @@ public class PlankService extends Service {
                         mTimerTaskIntervalMSec = 0;
                         mIsTimerTaskRunning = false;
 
-                        mStopwatchCallback.resetFromService();
-                        mStopwatchCallback.updateDisplay(mTimerTaskMSec);
-                        
                         PlankNotificationManager.reset(getApplicationContext(), Constants.WORK_METHOD.NOTIFICATION_READY);
+                        mPlankCallback.reset(Constants.WORK_METHOD.NOTIFICATION_READY);
                     }
                     break;
                 }
                 case Constants.BROADCAST_ACTION.APP_EXIT: {
-                    // It doesn't need to be separated into each mode.
-                    // So it calls one's method for exit
-                    timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.APP_EXIT);
-                    mStopwatchCallback.appExitFromService();
+                    timerTaskCommand(Constants.WORK_METHOD.NOTIFICATION_READY, Constants.SERVICE_WHAT.APP_EXIT);
+                    mPlankCallback.appExit();
                     break;
                 }
                 default:
@@ -150,43 +161,6 @@ public class PlankService extends Service {
             }
         }
     };
-
-    public interface IStopwatchCallback {
-        void startFromService();
-        void pauseFromService();
-        void resumeFromService();
-        void resetFromService();
-        void lapFromService(long passedMSec, long intervalMSec);
-        void updateDisplay(long mSec);
-        void appExitFromService();
-
-        void setWidgetsEnabled(boolean isEnabled);
-
-        int getLapCount();
-        long getLastLapMSec();
-    }
-
-    public interface ITimerCallback {
-        void startFromService();
-        void pauseFromService();
-        void resumeFromService();
-        void resetFromService();
-        void lapFromService(long passedMSec, long intervalMSec);
-        void updateDisplay(long mSec);
-        void resetDisplay();
-        void appExitFromService();
-
-        void setWidgetsEnabled(boolean isEnabled);
-
-        int getLapCount();
-        long getLastLapMSec();
-
-        long getStartTimeMSec();
-        void timerCompleteFromService();
-    }
-
-    private IStopwatchCallback mStopwatchCallback;
-    private ITimerCallback mTimerCallback;
 
     private final class ServiceHandler extends Handler {
 
@@ -205,18 +179,16 @@ public class PlankService extends Service {
 
                     switch (method) {
                         case Constants.WORK_METHOD.STOPWATCH: {
-                            mTimerCallback.setWidgetsEnabled(false);
-
                             mTimerTaskMSec++;
                             mTimerTaskIntervalMSec++;
-                            
+
                             PlankNotificationManager.update(
                                     getApplicationContext(),
                                     Constants.WORK_METHOD.STOPWATCH,
                                     mTimerTaskMSec,
                                     mTimerTaskIntervalMSec,
-                                    mStopwatchCallback.getLastLapMSec(),
-                                    mStopwatchCallback.getLapCount(),
+                                    mPlankCallback.getLastLapMSec(method),
+                                    mPlankCallback.getLapCount(method),
                                     mIsTimerTaskRunning
                             );
                             mTimer = new Timer();
@@ -232,8 +204,8 @@ public class PlankService extends Service {
                                                 Constants.WORK_METHOD.STOPWATCH,
                                                 mTimerTaskMSec,
                                                 mTimerTaskIntervalMSec,
-                                                mStopwatchCallback.getLastLapMSec(),
-                                                mStopwatchCallback.getLapCount(),
+                                                mPlankCallback.getLastLapMSec(method),
+                                                mPlankCallback.getLapCount(method),
                                                 mIsTimerTaskRunning
                                         );
                                     }
@@ -242,9 +214,7 @@ public class PlankService extends Service {
                             break;
                         }
                         case Constants.WORK_METHOD.TIMER: {
-                            mStopwatchCallback.setWidgetsEnabled(false);
-
-                            mTimerStartTimeMSec = mTimerCallback.getStartTimeMSec();
+                            mTimerStartTimeMSec = mPlankCallback.getStartTimeMSec(method);
                             mTimerTaskMSec = mTimerStartTimeMSec;
 
                             PlankNotificationManager.update(
@@ -252,8 +222,8 @@ public class PlankService extends Service {
                                     Constants.WORK_METHOD.TIMER,
                                     mTimerTaskMSec,
                                     mTimerTaskIntervalMSec,
-                                    mTimerCallback.getLastLapMSec(),
-                                    mTimerCallback.getLapCount(),
+                                    mPlankCallback.getLastLapMSec(method),
+                                    mPlankCallback.getLapCount(method),
                                     mIsTimerTaskRunning
                             );
                             mTimer = new Timer();
@@ -261,23 +231,21 @@ public class PlankService extends Service {
                                 @Override
                                 public void run() {
                                     if (mTimerTaskMSec == 0) {
-                                        mStopwatchCallback.setWidgetsEnabled(true);
-
+                                        mPlankCallback.plankComplete(method);
                                         resetService(method);
-                                        mTimerCallback.timerCompleteFromService();
                                     } else {
                                         mTimerTaskMSec--;
                                         mTimerTaskIntervalMSec++;
 
                                         if (mTimerTaskMSec % 1000 == 0) {
-                                            mTimerCallback.updateDisplay(mTimerTaskMSec);
+                                            mPlankCallback.updateViews(method, mTimerTaskMSec);
                                             PlankNotificationManager.update(
                                                     getApplicationContext(),
                                                     Constants.WORK_METHOD.TIMER,
                                                     mTimerTaskMSec,
                                                     mTimerTaskIntervalMSec,
-                                                    mTimerCallback.getLastLapMSec(),
-                                                    mTimerCallback.getLapCount(),
+                                                    mPlankCallback.getLastLapMSec(method),
+                                                    mPlankCallback.getLapCount(method),
                                                     mIsTimerTaskRunning
                                             );
                                         }
@@ -305,8 +273,8 @@ public class PlankService extends Service {
                             method,
                             mTimerTaskMSec,
                             mTimerTaskIntervalMSec,
-                            mTimerCallback.getLastLapMSec(),
-                            mTimerCallback.getLapCount(),
+                            mPlankCallback.getLastLapMSec(method),
+                            mPlankCallback.getLapCount(method),
                             mIsTimerTaskRunning
                     );
 
@@ -323,8 +291,8 @@ public class PlankService extends Service {
                                     Constants.WORK_METHOD.STOPWATCH,
                                     mTimerTaskMSec,
                                     mTimerTaskIntervalMSec,
-                                    mStopwatchCallback.getLastLapMSec(),
-                                    mStopwatchCallback.getLapCount(),
+                                    mPlankCallback.getLastLapMSec(method),
+                                    mPlankCallback.getLapCount(method),
                                     mIsTimerTaskRunning
                             );
                             mTimer = new Timer();
@@ -340,8 +308,8 @@ public class PlankService extends Service {
                                                 Constants.WORK_METHOD.STOPWATCH,
                                                 mTimerTaskMSec,
                                                 mTimerTaskIntervalMSec,
-                                                mStopwatchCallback.getLastLapMSec(),
-                                                mStopwatchCallback.getLapCount(),
+                                                mPlankCallback.getLastLapMSec(method),
+                                                mPlankCallback.getLapCount(method),
                                                 mIsTimerTaskRunning
                                         );
                                     }
@@ -355,8 +323,8 @@ public class PlankService extends Service {
                                     Constants.WORK_METHOD.TIMER,
                                     mTimerTaskMSec,
                                     mTimerTaskIntervalMSec,
-                                    mTimerCallback.getLastLapMSec(),
-                                    mTimerCallback.getLapCount(),
+                                    mPlankCallback.getLastLapMSec(method),
+                                    mPlankCallback.getLapCount(method),
                                     mIsTimerTaskRunning
                             );
                             mTimer = new Timer();
@@ -364,21 +332,21 @@ public class PlankService extends Service {
                                 @Override
                                 public void run() {
                                     if (mTimerTaskMSec == 0) {
+                                        mPlankCallback.plankComplete(method);
                                         resetService(method);
-                                        mTimerCallback.timerCompleteFromService();
                                     } else {
                                         mTimerTaskMSec--;
                                         mTimerTaskIntervalMSec++;
 
                                         if (mTimerTaskMSec % 1000 == 0) {
-                                            mTimerCallback.updateDisplay(mTimerTaskMSec);
+                                            mPlankCallback.updateViews(method, mTimerTaskMSec);
                                             PlankNotificationManager.update(
                                                     getApplicationContext(),
                                                     Constants.WORK_METHOD.TIMER,
                                                     mTimerTaskMSec,
                                                     mTimerTaskIntervalMSec,
-                                                    mTimerCallback.getLastLapMSec(),
-                                                    mTimerCallback.getLapCount(),
+                                                    mPlankCallback.getLastLapMSec(method),
+                                                    mPlankCallback.getLapCount(method),
                                                     mIsTimerTaskRunning
                                             );
                                         }
@@ -396,43 +364,39 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.SERVICE_WHAT.STOPWATCH_RESET: {
-                    mTimerCallback.setWidgetsEnabled(true);
-
                     resetService(method);
-                    mStopwatchCallback.updateDisplay(mTimerTaskMSec);
+                    mPlankCallback.updateViews(method, mTimerTaskMSec);
                     break;
                 }
                 case Constants.SERVICE_WHAT.TIMER_RESET: {
-                    mStopwatchCallback.setWidgetsEnabled(true);
-
                     resetService(method);
-                    mTimerCallback.resetDisplay();
+                    mPlankCallback.reset(method);
                     break;
                 }
                 case Constants.SERVICE_WHAT.STOPWATCH_LAP:
                 case Constants.SERVICE_WHAT.TIMER_LAP: {
                     switch (method) {
                         case Constants.WORK_METHOD.STOPWATCH:
-                            mStopwatchCallback.lapFromService(mTimerTaskMSec, mTimerTaskIntervalMSec);
+                            mPlankCallback.lap(method, mTimerTaskMSec, mTimerTaskIntervalMSec);
                             PlankNotificationManager.update(
                                     getApplicationContext(),
                                     Constants.WORK_METHOD.STOPWATCH,
                                     mTimerTaskMSec,
                                     mTimerTaskIntervalMSec,
-                                    mStopwatchCallback.getLastLapMSec(),
-                                    mStopwatchCallback.getLapCount(),
+                                    mPlankCallback.getLastLapMSec(method),
+                                    mPlankCallback.getLapCount(method),
                                     mIsTimerTaskRunning
                             );
                             break;
                         case Constants.WORK_METHOD.TIMER:
-                            mTimerCallback.lapFromService(mTimerTaskMSec, mTimerTaskIntervalMSec);
+                            mPlankCallback.lap(method, mTimerTaskMSec, mTimerTaskIntervalMSec);
                             PlankNotificationManager.update(
                                     getApplicationContext(),
                                     Constants.WORK_METHOD.TIMER,
                                     mTimerTaskMSec,
                                     mTimerTaskIntervalMSec,
-                                    mStopwatchCallback.getLastLapMSec(),
-                                    mStopwatchCallback.getLapCount(),
+                                    mPlankCallback.getLastLapMSec(method),
+                                    mPlankCallback.getLapCount(method),
                                     mIsTimerTaskRunning
                             );
                             break;
@@ -472,7 +436,7 @@ public class PlankService extends Service {
                     while (mIsTimerTaskRunning) {
                         switch (msg.arg1) {
                             case Constants.WORK_METHOD.STOPWATCH:
-                                mStopwatchCallback.updateDisplay(mTimerTaskMSec);
+                                mPlankCallback.updateViews(Constants.WORK_METHOD.STOPWATCH, mTimerTaskMSec);
                                 try {
                                     Thread.sleep(Constants.UPDATE_DISPLAY.STOPWATCH_FREQUENCY_IN_MILLISECOND);
                                 } catch (InterruptedException ex) {
@@ -544,11 +508,8 @@ public class PlankService extends Service {
         unregisterReceiver(mNotificationReceiver);
     }
 
-    public void registerCallback(IStopwatchCallback callback) {
-        mStopwatchCallback = callback;
-    }
-    public void registerCallback(ITimerCallback callback) {
-        mTimerCallback = callback;
+    public void registerCallback(IPlankCallback callback) {
+        mPlankCallback = callback;
     }
 
     public long getTimerStartTimeMSec() {
@@ -572,15 +533,16 @@ public class PlankService extends Service {
     }
 
     private void resetService(int method) {
+        PlankNotificationManager.reset(getApplicationContext(), method);
+        mPlankCallback.reset(method);
+
         if (mIsTimerTaskRunning) {
+            mIsTimerTaskRunning = false;
+
             mTimer.cancel();
         }
-
         mTimerTaskMSec = 0;
         mTimerTaskIntervalMSec = 0;
         mTimerStartTimeMSec = 0;
-        mIsTimerTaskRunning = false;
-
-        PlankNotificationManager.reset(getApplicationContext(), method);
     }
 }

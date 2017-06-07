@@ -41,16 +41,7 @@ public interface TimerContract {
     interface Presenter extends BasePresenter {
 
         void bindViewsFromViewHolderToFrag();
-        void bindPlankService();
-        void unbindPlankService();
 
-        void timerStart(int caller);
-        void timerPause(int caller);
-        void timerResume(int caller);
-        void timerReset(int caller);
-        void timerLap(int caller);
-        void appExit(int caller);
-
-        void updateWidgetsOnFragment(long mSec);
+        void controlFromFrag(int what);
     }
 }

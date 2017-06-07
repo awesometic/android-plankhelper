@@ -27,8 +27,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     private StopwatchFragment mStopwatchFragment;
     private TimerFragment mTimerFragment;
 
-    private StopwatchPresenter mStopwatchPresenter;
-    private TimerPresenter mTimerPresenter;
+    private PlankServiceManager mPlankServiceManager;
 
     public ViewPagerAdapter(FragmentManager fragmentManager, Context context) {
         super(fragmentManager);
@@ -49,15 +48,18 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             mTimerFragment = TimerFragment.newInstance();
         }
 
-        // presenter 생성
-        mStopwatchPresenter = new StopwatchPresenter(
-                PlankLogsRepository.getInstance(
-                        PlankLogsLocalDataSource.getInstance(mContext)),
-                mStopwatchFragment);
-        mTimerPresenter = new TimerPresenter(
-                PlankLogsRepository.getInstance(
-                        PlankLogsLocalDataSource.getInstance(mContext)),
-                mTimerFragment);
+        mPlankServiceManager = new PlankServiceManager(
+                new StopwatchPresenter(
+                        PlankLogsRepository.getInstance(
+                                PlankLogsLocalDataSource.getInstance(mContext)),
+                        mStopwatchFragment
+                ),
+                new TimerPresenter(
+                        PlankLogsRepository.getInstance(
+                                PlankLogsLocalDataSource.getInstance(mContext)),
+                        mTimerFragment
+                )
+        );
     }
 
     @Override
@@ -82,5 +84,9 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return mPageCount;
+    }
+
+    public PlankServiceManager getPlankServiceManager() {
+        return mPlankServiceManager;
     }
 }

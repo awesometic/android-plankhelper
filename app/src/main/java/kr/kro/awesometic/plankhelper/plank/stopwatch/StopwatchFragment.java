@@ -107,7 +107,6 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
         super.onStart();
 
         mPresenter.start();
-        mPresenter.bindPlankService();
     }
 
     @Override
@@ -117,9 +116,6 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
 
     @Override
     public void onDestroy() {
-        mPresenter.appExit(Constants.CALLER.FROM_STOPWATCH_FRAGMENT);
-        mPresenter.unbindPlankService();
-
         super.onDestroy();
     }
 
@@ -229,11 +225,11 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
         @Override
         public void onClick(View v) {
             if (getOnOffButtonValue().equals(getString(R.string.plank_stopwatch_on))) {
-                mPresenter.stopwatchStart(Constants.CALLER.FROM_STOPWATCH_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.STOPWATCH_START);
             } else if (getOnOffButtonValue().equals(getString(R.string.plank_stopwatch_pause))) {
-                mPresenter.stopwatchPause(Constants.CALLER.FROM_STOPWATCH_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.STOPWATCH_PAUSE);
             } else if (getOnOffButtonValue().equals(getString(R.string.plank_stopwatch_resume))) {
-                mPresenter.stopwatchResume(Constants.CALLER.FROM_STOPWATCH_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.STOPWATCH_RESUME);
             }
         }
     };
@@ -242,9 +238,9 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
         @Override
         public void onClick(View v) {
             if (getResetLapButtonValue().equals(getString(R.string.plank_stopwatch_reset))) {
-                mPresenter.stopwatchReset(Constants.CALLER.FROM_STOPWATCH_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.STOPWATCH_RESET);
             } else {
-                mPresenter.stopwatchLap(Constants.CALLER.FROM_STOPWATCH_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.STOPWATCH_LAP);
             }
         }
     };

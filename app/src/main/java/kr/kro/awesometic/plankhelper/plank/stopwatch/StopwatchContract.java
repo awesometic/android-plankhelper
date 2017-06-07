@@ -40,16 +40,7 @@ public interface StopwatchContract {
     interface Presenter extends BasePresenter {
 
         void bindViewsFromViewHolderToFrag();
-        void bindPlankService();
-        void unbindPlankService();
 
-        void stopwatchStart(int caller);
-        void stopwatchPause(int caller);
-        void stopwatchResume(int caller);
-        void stopwatchReset(int caller);
-        void stopwatchLap(int caller);
-        void appExit(int caller);
-
-        void updateWidgetsOnFragment(long mSec);
+        void controlFromFrag(int what);
     }
 }

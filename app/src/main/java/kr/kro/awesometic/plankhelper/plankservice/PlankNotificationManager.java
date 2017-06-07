@@ -4,7 +4,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -259,6 +261,7 @@ public class PlankNotificationManager {
         return notificationBuilder;
     }
 
+    @Nullable
     private static NotificationCompat.Action getNotificationAction(Context context, int what) {
         Intent intent = new Intent();
         PendingIntent pendingIntent;

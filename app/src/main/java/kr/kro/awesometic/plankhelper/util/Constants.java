@@ -57,12 +57,6 @@ public class Constants {
         int TIMER = 251;   
     }
 
-    public interface CALLER {
-        int FROM_SERVICE = 300;
-        int FROM_STOPWATCH_FRAGMENT = 301;
-        int FROM_TIMER_FRAGMENT = 351;
-    }
-
     public interface UPDATE_DISPLAY_WHAT {
         int UPDATE = 400;
     }

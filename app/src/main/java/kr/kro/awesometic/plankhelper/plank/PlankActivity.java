@@ -2,8 +2,6 @@ package kr.kro.awesometic.plankhelper.plank;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -46,6 +44,9 @@ public class PlankActivity extends AppCompatActivity {
 
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private ViewPagerAdapter mViewPagerAdapter;
+    private PlankServiceManager mPlankServiceManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +68,8 @@ public class PlankActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_24dp);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        PagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), PlankActivity.this);
+        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), PlankActivity.this);
+        PagerAdapter pagerAdapter = mViewPagerAdapter;
         ViewPager viewPager = mMaterialViewPager.getViewPager();
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(pagerAdapter.getCount());
@@ -111,9 +113,19 @@ public class PlankActivity extends AppCompatActivity {
             }
         });
 
+        mPlankServiceManager = mViewPagerAdapter.getPlankServiceManager();
+        mPlankServiceManager.bindService(this);
+
         if (mNavigationView != null) {
             setupDrawerContent(mNavigationView);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mPlankServiceManager.unbindService(this);
+
+        super.onDestroy();
     }
 
     @Override

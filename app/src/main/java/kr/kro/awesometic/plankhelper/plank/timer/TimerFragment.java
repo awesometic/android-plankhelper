@@ -113,7 +113,6 @@ public class TimerFragment extends Fragment implements TimerContract.View {
         super.onStart();
 
         mPresenter.start();
-        mPresenter.bindPlankService();
     }
 
     @Override
@@ -123,9 +122,6 @@ public class TimerFragment extends Fragment implements TimerContract.View {
 
     @Override
     public void onDestroy() {
-        mPresenter.appExit(Constants.CALLER.FROM_TIMER_FRAGMENT);
-        mPresenter.unbindPlankService();
-
         super.onDestroy();
     }
 
@@ -320,11 +316,11 @@ public class TimerFragment extends Fragment implements TimerContract.View {
         @Override
         public void onClick(View v) {
             if (getOnOffButtonValue().equals(getString(R.string.plank_timer_on))) {
-                mPresenter.timerStart(Constants.CALLER.FROM_TIMER_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.TIMER_START);
             } else if (getOnOffButtonValue().equals(getString(R.string.plank_timer_pause))) {
-                mPresenter.timerPause(Constants.CALLER.FROM_TIMER_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.TIMER_PAUSE);
             } else if (getOnOffButtonValue().equals(getString(R.string.plank_timer_resume))) {
-                mPresenter.timerResume(Constants.CALLER.FROM_TIMER_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.TIMER_RESUME);
             }
         }
     };
@@ -333,9 +329,9 @@ public class TimerFragment extends Fragment implements TimerContract.View {
         @Override
         public void onClick(View v) {
             if (getResetLapButtonValue().equals(getString(R.string.plank_timer_reset))) {
-                mPresenter.timerReset(Constants.CALLER.FROM_TIMER_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.TIMER_RESET);
             } else {
-                mPresenter.timerLap(Constants.CALLER.FROM_TIMER_FRAGMENT);
+                mPresenter.controlFromFrag(Constants.SERVICE_WHAT.TIMER_LAP);
             }
         }
     };
