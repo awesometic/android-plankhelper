@@ -51,5 +51,5 @@ PLANK HELPER
 - [AdvancedRecyclerView](https://github.com/h6ah4i/android-advancedrecyclerview)
 - [HelloChart](https://github.com/lecho/hellocharts-android)
 ----------------------
-> Last updated: 2017.06.06<br>
+> Last updated: 2017.06.07<br>
 > 이 프로젝트는 2017년 4월 15일부터 개발됐습니다.
