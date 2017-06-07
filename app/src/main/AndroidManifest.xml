@@ -35,7 +35,7 @@
         </activity>
         <service
             android:name=".plankservice.PlankService"
-            android:exported="true"
+            android:exported="false"
             android:enabled="true">
             <intent-filter>
                 <action android:name="kr.kro.awesometic.plankhelper.NOTI_ACTION_NOTIFICATION_READY" />
