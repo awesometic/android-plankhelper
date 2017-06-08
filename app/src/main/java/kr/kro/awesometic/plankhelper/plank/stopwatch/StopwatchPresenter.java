@@ -108,8 +108,6 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
                         break;
 
                     case Constants.SERVICE_WHAT.STOPWATCH_RESUME:
-                        mStopwatchPresenterCallback.stopwatchCommandToService(mMethod, Constants.SERVICE_WHAT.STOPWATCH_RESUME);
-
                         mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_pause));
                         mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_lap));
                         break;
