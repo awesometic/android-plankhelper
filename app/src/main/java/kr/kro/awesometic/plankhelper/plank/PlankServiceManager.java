@@ -25,6 +25,11 @@ public class PlankServiceManager {
         public void stopwatchCommandToService(int method, int what) {
             mPlankService.timerTaskCommand(method, what);
         }
+
+        @Override
+        public void updateWidgetsByCurrentState(int method) {
+            updateFragmentsWidget(method);
+        }
     };
 
     private TimerPresenter.ITimerPresenterCallback mTimerCallback = new TimerPresenter.ITimerPresenterCallback() {
@@ -36,6 +41,11 @@ public class PlankServiceManager {
         @Override
         public long getTimerStartMSec() {
             return mPlankService.getTimerStartTimeMSec();
+        }
+
+        @Override
+        public void updateWidgetsByCurrentState(int method) {
+            updateFragmentsWidget(method);
         }
     };
 
@@ -95,10 +105,14 @@ public class PlankServiceManager {
                 case Constants.WORK_METHOD.STOPWATCH:
                     mStopwatchPresenter.controlFromService(Constants.SERVICE_WHAT.STOPWATCH_RESET);
                     mTimerPresenter.setWidgetsEnabled(true);
+
+                    mStopwatchPresenter.clearLapTimeItem();
                     break;
                 case Constants.WORK_METHOD.TIMER:
                     mTimerPresenter.controlFromService(Constants.SERVICE_WHAT.TIMER_RESET);
                     mStopwatchPresenter.setWidgetsEnabled(true);
+
+                    mTimerPresenter.clearLapTimeItem();
                     break;
 
                 default:
@@ -220,6 +234,7 @@ public class PlankServiceManager {
             PlankService.LocalBinder binder = (PlankService.LocalBinder) service;
             mPlankService = binder.getService();
             mPlankService.registerCallback(mCallback);
+
             mBound = true;
         }
 
@@ -248,6 +263,56 @@ public class PlankServiceManager {
         if (mBound) {
             context.unbindService(mConnection);
             mBound = false;
+        }
+    }
+
+    public void plankActivityDestroyed() {
+        mPlankService.timerTaskCommand(Constants.SERVICE_WHAT.NOTIFICATION_READY, Constants.SERVICE_WHAT.APP_EXIT);
+    }
+
+    private void updateFragmentsWidget(int method) {
+        if (mBound) {
+            int justBeforeWhat = mPlankService.getJustBeforeWhat();
+
+            switch (justBeforeWhat) {
+                case Constants.SERVICE_WHAT.STOPWATCH_START:
+                case Constants.SERVICE_WHAT.STOPWATCH_PAUSE:
+                case Constants.SERVICE_WHAT.STOPWATCH_RESUME:
+                    mStopwatchPresenter.controlFromService(justBeforeWhat);
+                    mTimerPresenter.controlFromService(Constants.SERVICE_WHAT.TIMER_RESET);
+                    mTimerPresenter.setWidgetsEnabled(false);
+                    break;
+
+                case Constants.SERVICE_WHAT.TIMER_START:
+                case Constants.SERVICE_WHAT.TIMER_PAUSE:
+                case Constants.SERVICE_WHAT.TIMER_RESUME:
+                    mTimerPresenter.controlFromService(justBeforeWhat);
+                    mStopwatchPresenter.controlFromService(Constants.SERVICE_WHAT.STOPWATCH_RESET);
+                    mStopwatchPresenter.setWidgetsEnabled(false);
+                    break;
+
+                default:
+                    mStopwatchPresenter.controlFromService(Constants.SERVICE_WHAT.STOPWATCH_RESET);
+                    mTimerPresenter.controlFromService(Constants.SERVICE_WHAT.TIMER_RESET);
+                    mStopwatchPresenter.setWidgetsEnabled(true);
+                    mTimerPresenter.setWidgetsEnabled(true);
+                    break;
+            }
+        } else {
+            switch (method) {
+                case Constants.WORK_METHOD.STOPWATCH:
+                    mStopwatchPresenter.controlFromService(Constants.SERVICE_WHAT.STOPWATCH_RESET);
+                    mStopwatchPresenter.setWidgetsEnabled(true);
+                    break;
+
+                case Constants.WORK_METHOD.TIMER:
+                    mTimerPresenter.controlFromService(Constants.SERVICE_WHAT.TIMER_RESET);
+                    mTimerPresenter.setWidgetsEnabled(true);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

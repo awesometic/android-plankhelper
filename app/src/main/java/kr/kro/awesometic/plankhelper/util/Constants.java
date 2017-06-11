@@ -68,7 +68,7 @@ public class Constants {
     }
 
     public interface UPDATE_DISPLAY {
-        int STOPWATCH_FREQUENCY_IN_MILLISECOND = 100;
+        int STOPWATCH_FREQUENCY_IN_MILLISECOND = 125;
     }
 
     public interface RECYCLERVIEW_ADAPTER_VIEWTYPE {

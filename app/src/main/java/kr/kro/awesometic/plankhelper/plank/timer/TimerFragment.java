@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -38,9 +39,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 
 public class TimerFragment extends Fragment implements TimerContract.View {
-
-    private static final int ANIMATOR_POSITION_LIST = 0;
-    private static final int ANIMATOR_POSITION_LOADING = 1;
 
     private TimerContract.Presenter mPresenter;
     private Context mContext;
@@ -90,7 +88,7 @@ public class TimerFragment extends Fragment implements TimerContract.View {
         ButterKnife.bind(this, rootView);
 
         mLayoutManager = new LinearLayoutManager(mContext);
-        mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(ANIMATOR_POSITION_LIST);
+        mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(Constants.COMMON_ANIMATOR_POSITION.RECYCLERVIEW);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
@@ -102,6 +100,35 @@ public class TimerFragment extends Fragment implements TimerContract.View {
 
                     mIsViewsBound = true;
                 }
+            }
+        });
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                if(rv.getChildCount() > 0) {
+                    View childView = rv.findChildViewUnder(e.getX(), e.getY());
+
+                    if (rv.getChildAdapterPosition(childView) == Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD) {
+                        if (mPresenter.getTimerStart()) {
+                            switch (e.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
+                                    rv.requestDisallowInterceptTouchEvent(true);
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
             }
         });
 
@@ -116,23 +143,20 @@ public class TimerFragment extends Fragment implements TimerContract.View {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
+    public void onStop() {
+        super.onStop();
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+        mIsViewsBound = false;
     }
 
     @Override
     public void showLoading() {
-        mViewAnimator.setDisplayedChild(ANIMATOR_POSITION_LOADING);
+        mViewAnimator.setDisplayedChild(Constants.COMMON_ANIMATOR_POSITION.LOADING);
     }
 
     @Override
     public void showTimer() {
-        mViewAnimator.setDisplayedChild(ANIMATOR_POSITION_LIST);
+        mViewAnimator.setDisplayedChild(Constants.COMMON_ANIMATOR_POSITION.RECYCLERVIEW);
     }
 
     @Override
@@ -151,11 +175,10 @@ public class TimerFragment extends Fragment implements TimerContract.View {
     }
 
     @Override
-    public void bindViewsFromViewHolder() {
+    public void bindViewsFromViewHolder(TimerContract.BoundViewsCallback callback) {
         RecyclerViewAdapter.ViewHolder holder = (RecyclerViewAdapter.ViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
 
         if (holder.getItemViewType() == Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD) {
-
             npHour = holder.npHour;
             npMin = holder.npMin;
             npSec = holder.npSec;
@@ -194,28 +217,27 @@ public class TimerFragment extends Fragment implements TimerContract.View {
                 }
             });
 
-            npHour.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-            npMin.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-            npSec.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-
             btnOnOff.setOnClickListener(btnOnOffOnClickListener);
             btnResetLap.setOnClickListener(btnResetLapOnClickListener);
 
             lvLapTime.setAdapter(mLapTimeListViewAdapter);
             lvLapTime.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+
+            callback.onBoundViews();
         }
     }
 
     @Override
     public String getTimeString() {
-        return String.valueOf(npHour.getValue()) + ":" +
-                String.valueOf(npMin.getValue()) + ":" +
-                String.valueOf(npSec.getValue()) + ".000";
+        String resultHour = (npHour.getValue() >= 10) ? "" + npHour.getValue() : "0" + npHour.getValue();
+        String resultMin = (npMin.getValue() >= 10) ? "" + npMin.getValue() : "0" + npMin.getValue();
+        String resultSec = (npSec.getValue() >= 10) ? "" + npSec.getValue() : "0" + npSec.getValue();
+        
+        return resultHour + ":" + resultMin + ":" + resultSec + ".000";
     }
 
     @Override
     public void numberPickerChangeValueByOne(int type, boolean increment) {
-
         switch (type) {
             case Constants.NUMBERPICKER_TYPE.HOUR:
                 changeValueByOne(npHour, increment);
@@ -227,6 +249,21 @@ public class TimerFragment extends Fragment implements TimerContract.View {
                 changeValueByOne(npSec, increment);
                 break;
         }
+    }
+
+    @Override
+    public int getHour() {
+        return npHour.getValue();
+    }
+
+    @Override
+    public int getMin() {
+        return npMin.getValue();
+    }
+
+    @Override
+    public int getSec() {
+        return npSec.getValue();
     }
 
     @Override
@@ -292,7 +329,6 @@ public class TimerFragment extends Fragment implements TimerContract.View {
      *            the increment
      */
     private void changeValueByOne(final NumberPicker higherPicker, final boolean increment) {
-
         Method method;
         try {
             // reflection call for

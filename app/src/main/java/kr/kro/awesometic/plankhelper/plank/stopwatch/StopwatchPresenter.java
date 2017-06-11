@@ -3,7 +3,6 @@ package kr.kro.awesometic.plankhelper.plank.stopwatch;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
 
 import java.util.Locale;
 
@@ -28,6 +27,7 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
     public interface IStopwatchPresenterCallback {
         void stopwatchCommandToService(int method, int what);
+        void updateWidgetsByCurrentState(int method);
     }
     private IStopwatchPresenterCallback mStopwatchPresenterCallback;
     private final int mMethod = Constants.WORK_METHOD.STOPWATCH;
@@ -35,6 +35,8 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
     private LapTimeListViewAdapter mLapTimeListViewAdapter;
     private RecyclerViewAdapter mRecyclerViewAdapter;
     private Context mActivityContext;
+
+    private boolean mIsStart;
 
     public StopwatchPresenter(@NonNull PlankLogsRepository plankLogsRepository,
                               @NonNull StopwatchContract.View stopwatchView) {
@@ -46,13 +48,16 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
     private void initStopwatchPresenter() {
         mActivityContext = (Context) mStopwatchView.getActivityContext();
+        mIsStart = false;
     }
 
     private void initStopwatchView() {
         mStopwatchView.showLoading();
 
-        mLapTimeListViewAdapter = new LapTimeListViewAdapter();
-        mRecyclerViewAdapter = new RecyclerViewAdapter();
+        if (mLapTimeListViewAdapter == null && mRecyclerViewAdapter == null) {
+            mLapTimeListViewAdapter = new LapTimeListViewAdapter();
+            mRecyclerViewAdapter = new RecyclerViewAdapter();
+        }
 
         mStopwatchView.setLapTimeAdapter(mLapTimeListViewAdapter);
         mStopwatchView.setRecyclerViewAdapter(mRecyclerViewAdapter);
@@ -60,10 +65,6 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
         mRecyclerViewAdapter.setPlankLogs(null);
 
         mStopwatchView.showStopwatch();
-    }
-
-    public void registerCallback(IStopwatchPresenterCallback callback) {
-        mStopwatchPresenterCallback = callback;
     }
 
     @Override
@@ -74,22 +75,25 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
     @Override
     public void bindViewsFromViewHolderToFrag() {
-        mStopwatchView.bindViewsFromViewHolder();
-        mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
-        mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
+        mStopwatchView.bindViewsFromViewHolder(new StopwatchContract.BoundViewsCallback() {
+            @Override
+            public void onBoundViews() {
+                mStopwatchPresenterCallback.updateWidgetsByCurrentState(mMethod);
+            }
+        });
     }
 
     @Override
     public void controlFromFrag(int what) {
         mStopwatchPresenterCallback.stopwatchCommandToService(mMethod, what);
-        stopwatchControl(what);
     }
 
-    public void controlFromService(int what) {
-        stopwatchControl(what);
+    @Override
+    public boolean getStopwatchStart() {
+        return mIsStart;
     }
 
-    private void stopwatchControl(final int what) {
+    public void controlFromService(final int what) {
         ((Activity) mActivityContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -98,8 +102,7 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
                         mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_pause));
                         mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_lap));
 
-                        mLapTimeListViewAdapter.clear();
-                        mLapTimeListViewAdapter.notifyDataSetChanged();
+                        mIsStart = true;
                         break;
 
                     case Constants.SERVICE_WHAT.STOPWATCH_PAUSE:
@@ -113,17 +116,11 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
                         break;
 
                     case Constants.SERVICE_WHAT.STOPWATCH_RESET:
-                        if (TimeUtils.timeFormatToMSec(mStopwatchView.getTimeString()) > 0) {
-                            savePlankLogData();
-                        }
-
+                        updateWidgetsOnFragment(0);
                         mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
                         mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
 
-                        if (TimeUtils.timeFormatToMSec(mStopwatchView.getTimeString()) == 0) {
-                            mLapTimeListViewAdapter.clear();
-                            mLapTimeListViewAdapter.notifyDataSetChanged();
-                        }
+                        mIsStart = false;
                         break;
 
                     default:
@@ -131,6 +128,10 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
                 }
             }
         });
+    }
+
+    public void registerCallback(IStopwatchPresenterCallback callback) {
+        mStopwatchPresenterCallback = callback;
     }
 
     public void updateWidgetsOnFragment(long mSec) {
@@ -158,24 +159,33 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
         String passedTime = TimeUtils.mSecToTimeFormat(passedMSec);
         String interval = TimeUtils.mSecToTimeFormat(intervalMSec);
 
-        LapTime lapTime = new LapTime(
+        final LapTime lapTime = new LapTime(
                 Constants.DATABASE.EMPTY_PARENT_ID,
                 order,
                 passedTime,
                 interval
         );
 
-        mLapTimeListViewAdapter.addItem(lapTime);
-
         ((Activity) mActivityContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mLapTimeListViewAdapter.addItem(lapTime);
                 mLapTimeListViewAdapter.notifyDataSetChanged();
             }
         });
     }
 
-    private void savePlankLogData() {
+    public void clearLapTimeItem() {
+        ((Activity) mActivityContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+        mLapTimeListViewAdapter.clear();
+        mLapTimeListViewAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    public void savePlankLogData() {
         int lapCount = mLapTimeListViewAdapter.getCount();
 
         PlankLog plankLog = new PlankLog(

@@ -37,19 +37,22 @@
                     android:id="@+id/numberPicker_hour"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:descendantFocusability="blocksDescendants" />
 
                 <NumberPicker
                     android:id="@+id/numberPicker_min"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:descendantFocusability="blocksDescendants" />
 
                 <NumberPicker
                     android:id="@+id/numberPicker_sec"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:descendantFocusability="blocksDescendants" />
             </LinearLayout>
 
             <ListView

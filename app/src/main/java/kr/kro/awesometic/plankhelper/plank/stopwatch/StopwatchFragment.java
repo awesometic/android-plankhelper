@@ -7,8 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -32,9 +32,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 
 public class StopwatchFragment extends Fragment implements StopwatchContract.View {
-
-    private static final int ANIMATOR_POSITION_LIST = 0;
-    private static final int ANIMATOR_POSITION_LOADING = 1;
 
     private StopwatchContract.Presenter mPresenter;
     private Context mContext;
@@ -84,7 +81,7 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
         ButterKnife.bind(this, rootView);
 
         mLayoutManager = new LinearLayoutManager(mContext);
-        mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(ANIMATOR_POSITION_LIST);
+        mRecyclerView = (RecyclerView) mViewAnimator.getChildAt(Constants.COMMON_ANIMATOR_POSITION.RECYCLERVIEW);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
@@ -96,6 +93,35 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
 
                     mIsViewsBound = true;
                 }
+            }
+        });
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                if(rv.getChildCount() > 0) {
+                    View childView = rv.findChildViewUnder(e.getX(), e.getY());
+
+                    if (rv.getChildAdapterPosition(childView) == Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD) {
+                        if (mPresenter.getStopwatchStart()) {
+                            switch (e.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
+                                    rv.requestDisallowInterceptTouchEvent(true);
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
             }
         });
 
@@ -110,23 +136,20 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
+    public void onStop() {
+        super.onStop();
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+        mIsViewsBound = false;
     }
 
     @Override
     public void showLoading() {
-        mViewAnimator.setDisplayedChild(ANIMATOR_POSITION_LOADING);
+        mViewAnimator.setDisplayedChild(Constants.COMMON_ANIMATOR_POSITION.LOADING);
     }
 
     @Override
     public void showStopwatch() {
-        mViewAnimator.setDisplayedChild(ANIMATOR_POSITION_LIST);
+        mViewAnimator.setDisplayedChild(Constants.COMMON_ANIMATOR_POSITION.RECYCLERVIEW);
     }
 
     @Override
@@ -145,7 +168,7 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
     }
 
     @Override
-    public void bindViewsFromViewHolder() {
+    public void bindViewsFromViewHolder(StopwatchContract.BoundViewsCallback callback) {
         RecyclerViewAdapter.ViewHolder holder = (RecyclerViewAdapter.ViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
 
         if (holder.getItemViewType() == Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD) {
@@ -162,6 +185,8 @@ public class StopwatchFragment extends Fragment implements StopwatchContract.Vie
 
             lvLapTime.setAdapter(mLapTimeListViewAdapter);
             lvLapTime.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+
+            callback.onBoundViews();
         }
     }
 

@@ -2,6 +2,7 @@ package kr.kro.awesometic.plankhelper.plank;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -12,8 +13,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.settings.SettingsActivity;
 import kr.kro.awesometic.plankhelper.statistics.StatisticsActivity;
+import kr.kro.awesometic.plankhelper.util.Constants;
 import kr.kro.awesometic.plankhelper.util.SharedPreferenceManager;
 import kr.kro.awesometic.plankhelper.util.Singleton;
 
@@ -114,7 +116,6 @@ public class PlankActivity extends AppCompatActivity {
         });
 
         mPlankServiceManager = mViewPagerAdapter.getPlankServiceManager();
-        mPlankServiceManager.bindService(this);
 
         if (mNavigationView != null) {
             setupDrawerContent(mNavigationView);
@@ -122,10 +123,18 @@ public class PlankActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        mPlankServiceManager.unbindService(this);
+    protected void onStart() {
+        super.onStart();
 
+        mPlankServiceManager.bindService(this);
+    }
+
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
+
+        mPlankServiceManager.unbindService(this);
+        mPlankServiceManager.plankActivityDestroyed();
     }
 
     @Override

@@ -12,7 +12,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Timer;
@@ -37,6 +36,8 @@ public class PlankService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
 
+    private Context mServiceContext;
+
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
 
@@ -45,6 +46,8 @@ public class PlankService extends Service {
     private long mTimerStartTimeMSec;
     private int mTimerTaskIntervalMSec;
     private boolean mIsTimerTaskRunning;
+
+    private int mJustBeforeWhat;
 
     private Looper mUpdateDisplayLooper;
     private UpdateDisplayHandler mUpdateDisplayHandler;
@@ -60,7 +63,6 @@ public class PlankService extends Service {
         void plankComplete(int method);
 
         long getStartTimeMSec(int method);
-
         int getLapCount(int method);
         long getLastLapMSec(int method);
 
@@ -77,17 +79,14 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_START: {
-                    mPlankCallback.start(Constants.WORK_METHOD.STOPWATCH);
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_START);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_PAUSE: {
-                    mPlankCallback.pause(Constants.WORK_METHOD.STOPWATCH);
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_PAUSE);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_RESUME: {
-                    mPlankCallback.resume(Constants.WORK_METHOD.STOPWATCH);
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_RESUME);
                     break;
                 }
@@ -96,7 +95,6 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.BROADCAST_ACTION.STOPWATCH_RESET: {
-                    mPlankCallback.reset(Constants.WORK_METHOD.STOPWATCH);
                     timerTaskCommand(Constants.WORK_METHOD.STOPWATCH, Constants.SERVICE_WHAT.STOPWATCH_RESET);
                     break;
                 }
@@ -113,18 +111,15 @@ public class PlankService extends Service {
                         startPlankActivityIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(startPlankActivityIntent);
                     } else {
-                        mPlankCallback.start(Constants.WORK_METHOD.TIMER);
                         timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_START);
                     }
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_PAUSE: {
-                    mPlankCallback.pause(Constants.WORK_METHOD.TIMER);
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_PAUSE);
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_RESUME: {
-                    mPlankCallback.resume(Constants.WORK_METHOD.TIMER);
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_RESUME);
                     break;
                 }
@@ -133,7 +128,6 @@ public class PlankService extends Service {
                     break;
                 }
                 case Constants.BROADCAST_ACTION.TIMER_RESET: {
-                    mPlankCallback.reset(Constants.WORK_METHOD.TIMER);
                     timerTaskCommand(Constants.WORK_METHOD.TIMER, Constants.SERVICE_WHAT.TIMER_RESET);
                     break;
                 }
@@ -147,13 +141,11 @@ public class PlankService extends Service {
                         mIsTimerTaskRunning = false;
 
                         PlankNotificationManager.reset(getApplicationContext(), Constants.WORK_METHOD.NOTIFICATION_READY);
-                        mPlankCallback.reset(Constants.WORK_METHOD.NOTIFICATION_READY);
                     }
                     break;
                 }
                 case Constants.BROADCAST_ACTION.APP_EXIT: {
                     timerTaskCommand(Constants.WORK_METHOD.NOTIFICATION_READY, Constants.SERVICE_WHAT.APP_EXIT);
-                    mPlankCallback.appExit();
                     break;
                 }
                 default:
@@ -172,9 +164,15 @@ public class PlankService extends Service {
         public void handleMessage(Message msg) {
             final int method = msg.arg1;
 
+            if (msg.what != Constants.SERVICE_WHAT.STOPWATCH_LAP
+                    && msg.what != Constants.SERVICE_WHAT.TIMER_LAP) {
+                mJustBeforeWhat = msg.what;
+            }
+
             switch (msg.what) {
                 case Constants.SERVICE_WHAT.STOPWATCH_START:
                 case Constants.SERVICE_WHAT.TIMER_START: {
+                    mPlankCallback.start(method);
                     mIsTimerTaskRunning = true;
 
                     switch (method) {
@@ -264,6 +262,7 @@ public class PlankService extends Service {
                 }
                 case Constants.SERVICE_WHAT.STOPWATCH_PAUSE:
                 case Constants.SERVICE_WHAT.TIMER_PAUSE: {
+                    mPlankCallback.pause(method);
                     mIsTimerTaskRunning = false;
 
                     mTimer.cancel();
@@ -282,6 +281,7 @@ public class PlankService extends Service {
                 }
                 case Constants.SERVICE_WHAT.STOPWATCH_RESUME:
                 case Constants.SERVICE_WHAT.TIMER_RESUME: {
+                    mPlankCallback.resume(method);
                     mIsTimerTaskRunning = true;
 
                     switch (method) {
@@ -363,14 +363,10 @@ public class PlankService extends Service {
 
                     break;
                 }
-                case Constants.SERVICE_WHAT.STOPWATCH_RESET: {
-                    resetService(method);
-                    mPlankCallback.updateViews(method, mTimerTaskMSec);
-                    break;
-                }
+                case Constants.SERVICE_WHAT.STOPWATCH_RESET:
                 case Constants.SERVICE_WHAT.TIMER_RESET: {
-                    resetService(method);
                     mPlankCallback.reset(method);
+                    resetService(method);
                     break;
                 }
                 case Constants.SERVICE_WHAT.STOPWATCH_LAP:
@@ -412,9 +408,10 @@ public class PlankService extends Service {
                 case Constants.SERVICE_WHAT.APP_EXIT: {
                     if (mIsTimerTaskRunning) {
                         mTimer.cancel();
-
-                        stopForeground(true);
                     }
+
+                    PlankNotificationManager.setNotificationForeground(mServiceContext, false);
+                    mPlankCallback.appExit();
                     break;
                 }
                 default:
@@ -461,6 +458,8 @@ public class PlankService extends Service {
 
     @Override
     public void onCreate() {
+        mServiceContext = this;
+
         // 서비스에 대한 백그라운드 스레드 준비
         HandlerThread thread = new HandlerThread("AwesometicPlankHelperService",
                 Process.THREAD_PRIORITY_BACKGROUND);
@@ -493,12 +492,14 @@ public class PlankService extends Service {
         notificationBRIntentFilter.addAction(Constants.BROADCAST_ACTION.TIMER_LAP);
         notificationBRIntentFilter.addAction(Constants.BROADCAST_ACTION.TIMER_RESET);
         registerReceiver(mNotificationReceiver, notificationBRIntentFilter);
+
+        mJustBeforeWhat = Constants.SERVICE_WHAT.NOTIFICATION_READY;
+        mIsTimerTaskRunning = false;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        PlankNotificationManager.setNotificationForeground(this, true);
-        mIsTimerTaskRunning = false;
+        PlankNotificationManager.setNotificationForeground(mServiceContext, true);
 
         return mBinder;
     }
@@ -521,6 +522,10 @@ public class PlankService extends Service {
         msg.what = what;
         msg.arg1 = method;
         mServiceHandler.sendMessage(msg);
+    }
+
+    public int getJustBeforeWhat() {
+        return mJustBeforeWhat;
     }
 
     private void updateFragmentDisplay(int method) {

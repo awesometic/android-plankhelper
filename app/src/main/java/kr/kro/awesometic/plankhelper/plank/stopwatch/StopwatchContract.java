@@ -9,6 +9,10 @@ import kr.kro.awesometic.plankhelper.BaseView;
 
 public interface StopwatchContract {
 
+    interface BoundViewsCallback {
+        void onBoundViews();
+    }
+
     interface View extends BaseView<Presenter> {
 
         void showLoading();
@@ -19,7 +23,7 @@ public interface StopwatchContract {
         void setRecyclerViewAdapter(Object recyclerViewAdapter);
         void setLapTimeAdapter(Object lapTimeAdapter);
 
-        void bindViewsFromViewHolder();
+        void bindViewsFromViewHolder(BoundViewsCallback boundViewsCallback);
 
         String getTimeString();
         void setHour(String hour);
@@ -42,5 +46,7 @@ public interface StopwatchContract {
         void bindViewsFromViewHolderToFrag();
 
         void controlFromFrag(int what);
+
+        boolean getStopwatchStart();
     }
 }

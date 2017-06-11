@@ -9,6 +9,10 @@ import kr.kro.awesometic.plankhelper.BaseView;
 
 public interface TimerContract {
 
+    interface BoundViewsCallback {
+        void onBoundViews();
+    }
+
     interface View extends BaseView<Presenter> {
 
         void showLoading();
@@ -19,10 +23,15 @@ public interface TimerContract {
         void setLapTimeAdapter(Object lapTimeAdapter);
         void setRecyclerViewAdapter(Object recyclerViewAdapter);
 
-        void bindViewsFromViewHolder();
+        void bindViewsFromViewHolder(BoundViewsCallback boundViewsCallback);
 
         String getTimeString();
         void numberPickerChangeValueByOne(int type, boolean increment);
+
+        int getHour();
+        int getMin();
+        int getSec();
+        
         void setHour(int hour);
         void setMin(int min);
         void setSec(int sec);
@@ -43,5 +52,7 @@ public interface TimerContract {
         void bindViewsFromViewHolderToFrag();
 
         void controlFromFrag(int what);
+
+        boolean getTimerStart();
     }
 }
