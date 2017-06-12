@@ -8,23 +8,43 @@ import android.util.Log;
 
 public class LogManager {
 
-    public static void v(String string) {
-        Log.v(Constants.LOG_TAG, string);
+    public static void v(Object content) {
+        if (content instanceof String) {
+            Log.d(Constants.LOG_TAG, (String) content);
+        } else {
+            Log.d(Constants.LOG_TAG, String.valueOf(content));
+        }
     }
 
-    public static void d(String string) {
-        Log.d(Constants.LOG_TAG, string);
+    public static void d(Object content) {
+        if (content instanceof String) {
+            Log.d(Constants.LOG_TAG, (String) content);
+        } else {
+            Log.d(Constants.LOG_TAG, String.valueOf(content));   
+        }
     }
 
-    public static void i(String string) {
-        Log.i(Constants.LOG_TAG, string);
+    public static void i(Object content) {
+        if (content instanceof String) {
+            Log.d(Constants.LOG_TAG, (String) content);
+        } else {
+            Log.d(Constants.LOG_TAG, String.valueOf(content));
+        }
     }
 
-    public static void w(String string) {
-        Log.w(Constants.LOG_TAG, string);
+    public static void w(Object content) {
+        if (content instanceof String) {
+            Log.d(Constants.LOG_TAG, (String) content);
+        } else {
+            Log.d(Constants.LOG_TAG, String.valueOf(content));
+        }
     }
 
-    public static void e(String string) {
-        Log.e(Constants.LOG_TAG, string);
+    public static void e(Object content) {
+        if (content instanceof String) {
+            Log.d(Constants.LOG_TAG, (String) content);
+        } else {
+            Log.d(Constants.LOG_TAG, String.valueOf(content));
+        }
     }
 }
