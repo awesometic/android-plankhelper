@@ -21,9 +21,7 @@ import kr.kro.awesometic.plankhelper.util.TimeUtils;
 public class PlankNotificationManager {
 
     private static NotificationManager mNotificationManager;
-    private static NotificationCompat.Builder mReadyBuilder;
-    private static NotificationCompat.Builder mStopwatchBuilder;
-    private static NotificationCompat.Builder mTimerBuilder;
+    private static NotificationCompat.Builder mNotificationBuilder;
 
     private static ArrayList<NotificationCompat.Action> mActionsNotificationReady = new ArrayList<>();
     private static ArrayList<NotificationCompat.Action> mActionsStopwatchRunning = new ArrayList<>();
@@ -37,12 +35,14 @@ public class PlankNotificationManager {
         PlankService plankService = (PlankService) context;
 
         if (isForeground) {
-            init(context, Constants.WORK_METHOD.NOTIFICATION_READY);
+            init(context);
 
             plankService.startForeground(
                     Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                    mReadyBuilder.build()
+                    mNotificationBuilder.build()
             );
+
+            reset(context, Constants.WORK_METHOD.NOTIFICATION_READY);
         } else {
             plankService.stopForeground(true);
         }
@@ -54,65 +54,65 @@ public class PlankNotificationManager {
         switch (method) {
             case Constants.WORK_METHOD.STOPWATCH: {
                 if (isRunning) {
-                    mStopwatchBuilder
+                    mNotificationBuilder
                             .setContentTitle(context.getString(R.string.plank_stopwatch_notification_title_ongoing))
                             .mActions = mActionsStopwatchRunning;
                 } else if (mSec == 0){
-                    mStopwatchBuilder
+                    mNotificationBuilder
                             .setContentTitle(context.getString(R.string.plank_stopwatch_notification_title_ready))
                             .mActions = mActionsStopwatchReady;
                 } else {
-                    mStopwatchBuilder
+                    mNotificationBuilder
                             .setContentTitle(context.getString(R.string.plank_stopwatch_notification_title_ongoing))
                             .mActions = mActionsStopwatchPaused;
                 }
 
                 if (isRunning && lapCount > 0) {
-                    mStopwatchBuilder.setContentText(
+                    mNotificationBuilder.setContentText(
                             TimeUtils.mSecToTimeFormat(mSec).substring(0, 8) +
                                     " - " + TimeUtils.mSecToTimeFormat(intervalMSec).substring(0, 8) +
                                     " - " + TimeUtils.mSecToTimeFormat(lastLapMSec).substring(0, 8) +
                                     " (" + lapCount + ")"
                     );
                 } else {
-                    mStopwatchBuilder.setContentText(TimeUtils.mSecToTimeFormat(mSec).substring(0, 8));
+                    mNotificationBuilder.setContentText(TimeUtils.mSecToTimeFormat(mSec).substring(0, 8));
                 }
 
                 mNotificationManager.notify(
                         Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mStopwatchBuilder.build()
+                        mNotificationBuilder.build()
                 );
                 break;
             }
             case Constants.WORK_METHOD.TIMER: {
                 if (isRunning) {
-                    mTimerBuilder
+                    mNotificationBuilder
                             .setContentTitle(context.getString(R.string.plank_timer_notification_title_ongoing))
                             .mActions = mActionsTimerRunning;
                 } else if (mSec == 0){
-                    mTimerBuilder
+                    mNotificationBuilder
                             .setContentTitle(context.getString(R.string.plank_timer_notification_title_ready))
                             .mActions = mActionsTimerReady;
                 } else {
-                    mTimerBuilder
+                    mNotificationBuilder
                             .setContentTitle(context.getString(R.string.plank_timer_notification_title_ongoing))
                             .mActions = mActionsTimerPaused;
                 }
 
                 if (isRunning && lapCount > 0) {
-                    mTimerBuilder.setContentText(
+                    mNotificationBuilder.setContentText(
                             TimeUtils.mSecToTimeFormat(mSec).substring(0, 8) +
                                     " - " + TimeUtils.mSecToTimeFormat(intervalMSec).substring(0, 8) +
                                     " - " + TimeUtils.mSecToTimeFormat(lastLapMSec).substring(0, 8) +
                                     " (" + lapCount + ")"
                     );
                 } else {
-                    mTimerBuilder.setContentText(TimeUtils.mSecToTimeFormat(mSec).substring(0, 8));
+                    mNotificationBuilder.setContentText(TimeUtils.mSecToTimeFormat(mSec).substring(0, 8));
                 }
 
                 mNotificationManager.notify(
                         Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mTimerBuilder.build()
+                        mNotificationBuilder.build()
                 );
                 break;
             }
@@ -127,38 +127,38 @@ public class PlankNotificationManager {
 
         switch (method) {
             case Constants.WORK_METHOD.NOTIFICATION_READY: {
-                mReadyBuilder
+                mNotificationBuilder
                         .setContentTitle(context.getString(R.string.notification_ready_title))
                         .setContentText(context.getString(R.string.notification_ready_text))
                         .mActions = mActionsNotificationReady;
 
                 mNotificationManager.notify(
                         Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mReadyBuilder.build()
+                        mNotificationBuilder.build()
                 );
                 break;
             }
             case Constants.WORK_METHOD.STOPWATCH: {
-                mStopwatchBuilder
+                mNotificationBuilder
                         .setContentTitle(context.getString(R.string.plank_stopwatch_notification_title_ready))
                         .setContentText(TimeUtils.mSecToTimeFormat(0).substring(0, 8))
                         .mActions = mActionsStopwatchReady;
 
                 mNotificationManager.notify(
                         Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mStopwatchBuilder.build()
+                        mNotificationBuilder.build()
                 );
                 break;
             }
             case Constants.WORK_METHOD.TIMER: {
-                mTimerBuilder
+                mNotificationBuilder
                         .setContentTitle(context.getString(R.string.plank_timer_notification_title_ready))
                         .setContentText(TimeUtils.mSecToTimeFormat(0).substring(0, 8))
                         .mActions = mActionsTimerReady;
 
                 mNotificationManager.notify(
                         Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mTimerBuilder.build()
+                        mNotificationBuilder.build()
                 );
                 break;
             }
@@ -168,11 +168,9 @@ public class PlankNotificationManager {
         }
     }
 
-    private static void init(Context context, int method) {
+    private static void init(Context context) {
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mReadyBuilder = getNotificationBuilder(context, Constants.WORK_METHOD.NOTIFICATION_READY);
-        mStopwatchBuilder = getNotificationBuilder(context, Constants.WORK_METHOD.STOPWATCH);
-        mTimerBuilder = getNotificationBuilder(context, Constants.WORK_METHOD.TIMER);
+        mNotificationBuilder = getNotificationBuilder(context);
 
         mActionsNotificationReady.add(getNotificationAction(context, Constants.SERVICE_WHAT.STOPWATCH_READY));
         mActionsNotificationReady.add(getNotificationAction(context, Constants.SERVICE_WHAT.TIMER_READY));
@@ -202,62 +200,20 @@ public class PlankNotificationManager {
         mActionsTimerPaused.add(getNotificationAction(context, Constants.SERVICE_WHAT.TIMER_RESET));
         mActionsTimerPaused.add(getNotificationAction(context, Constants.SERVICE_WHAT.NOTIFICATION_READY));
 
-        switch (method) {
-            case Constants.WORK_METHOD.NOTIFICATION_READY:
-                mNotificationManager.notify(
-                        Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mReadyBuilder.build());
-                break;
-            case Constants.WORK_METHOD.STOPWATCH:
-                mNotificationManager.notify(
-                        Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mStopwatchBuilder.build());
-                break;
-            case Constants.WORK_METHOD.TIMER:
-                mNotificationManager.notify(
-                        Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                        mTimerBuilder.build());
-                break;
-        }
+        mNotificationManager.notify(
+                Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                mNotificationBuilder.build());
     }
 
-    private static NotificationCompat.Builder getNotificationBuilder(Context context, int method) {
+    private static NotificationCompat.Builder getNotificationBuilder(Context context) {
         Intent notificationIntent = new Intent(context, PlankActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+        return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_timer_white_48dp)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true);
-
-        switch (method) {
-            case Constants.WORK_METHOD.NOTIFICATION_READY: {
-                notificationBuilder
-                        .setContentTitle(context.getString(R.string.notification_ready_title))
-                        .setContentText(context.getString(R.string.notification_ready_text))
-                        .mActions = mActionsNotificationReady;
-                break;
-            }
-            case Constants.WORK_METHOD.STOPWATCH: {
-                notificationBuilder
-                        .setContentTitle(context.getString(R.string.plank_stopwatch_notification_title_ready))
-                        .setContentText(TimeUtils.mSecToTimeFormat(0).substring(0, 8))
-                        .mActions = mActionsStopwatchReady;
-                break;
-            }
-            case Constants.WORK_METHOD.TIMER: {
-                notificationBuilder
-                        .setContentTitle(context.getString(R.string.plank_timer_notification_title_ready))
-                        .setContentText(TimeUtils.mSecToTimeFormat(0).substring(0, 8))
-                        .mActions = mActionsTimerReady;
-                break;
-            }
-            default:
-                break;
-        }
-
-        return notificationBuilder;
     }
 
     @Nullable
