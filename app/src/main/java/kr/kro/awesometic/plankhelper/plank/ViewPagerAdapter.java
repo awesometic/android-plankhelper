@@ -58,7 +58,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                         PlankLogsRepository.getInstance(
                                 PlankLogsLocalDataSource.getInstance(mContext)),
                         mTimerFragment
-                )
+                ),
+                mContext
         );
     }
 

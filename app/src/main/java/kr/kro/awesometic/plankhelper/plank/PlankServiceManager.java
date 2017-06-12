@@ -1,10 +1,12 @@
 package kr.kro.awesometic.plankhelper.plank;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 
 import kr.kro.awesometic.plankhelper.plank.stopwatch.StopwatchPresenter;
 import kr.kro.awesometic.plankhelper.plank.timer.TimerPresenter;
@@ -19,6 +21,8 @@ public class PlankServiceManager {
 
     private StopwatchPresenter mStopwatchPresenter;
     private TimerPresenter mTimerPresenter;
+
+    private Context mActivityContext;
 
     private StopwatchPresenter.IStopwatchPresenterCallback mStopwatchCallback = new StopwatchPresenter.IStopwatchPresenterCallback() {
         @Override
@@ -151,22 +155,6 @@ public class PlankServiceManager {
         }
 
         @Override
-        public void plankComplete(int method) {
-            switch (method) {
-                case Constants.WORK_METHOD.STOPWATCH:
-                    mTimerPresenter.setWidgetsEnabled(true);
-                    break;
-                case Constants.WORK_METHOD.TIMER:
-                    mTimerPresenter.plankComplete();
-                    mStopwatchPresenter.setWidgetsEnabled(true);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        @Override
         public long getStartTimeMSec(int method) {
             long startTimeMSec = 0;
 
@@ -225,6 +213,8 @@ public class PlankServiceManager {
 
         @Override
         public void appExit() {
+            unbindService(mActivityContext);
+            ActivityCompat.finishAffinity((Activity) mActivityContext);
             System.exit(0);
         }
     };
@@ -244,9 +234,10 @@ public class PlankServiceManager {
         }
     };
 
-    public PlankServiceManager(StopwatchPresenter stopwatchPresenter, TimerPresenter timerPresenter) {
+    public PlankServiceManager(StopwatchPresenter stopwatchPresenter, TimerPresenter timerPresenter, Context context) {
         mStopwatchPresenter = stopwatchPresenter;
         mTimerPresenter = timerPresenter;
+        mActivityContext = context;
     }
 
     public void bindService(Context context) {

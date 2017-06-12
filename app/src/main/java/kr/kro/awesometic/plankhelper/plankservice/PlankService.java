@@ -60,7 +60,6 @@ public class PlankService extends Service {
         void lap(int method, long passedTime, long intervalTime);
 
         void updateViews(int method, long mSec);
-        void plankComplete(int method);
 
         long getStartTimeMSec(int method);
         int getLapCount(int method);
@@ -229,7 +228,6 @@ public class PlankService extends Service {
                                 @Override
                                 public void run() {
                                     if (mTimerTaskMSec == 0) {
-                                        mPlankCallback.plankComplete(method);
                                         resetService(method);
                                     } else {
                                         mTimerTaskMSec--;
@@ -332,7 +330,6 @@ public class PlankService extends Service {
                                 @Override
                                 public void run() {
                                     if (mTimerTaskMSec == 0) {
-                                        mPlankCallback.plankComplete(method);
                                         resetService(method);
                                     } else {
                                         mTimerTaskMSec--;
@@ -365,7 +362,6 @@ public class PlankService extends Service {
                 }
                 case Constants.SERVICE_WHAT.STOPWATCH_RESET:
                 case Constants.SERVICE_WHAT.TIMER_RESET: {
-                    mPlankCallback.reset(method);
                     resetService(method);
                     break;
                 }

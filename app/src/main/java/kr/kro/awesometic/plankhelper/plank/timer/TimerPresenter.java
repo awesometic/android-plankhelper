@@ -2,7 +2,12 @@ package kr.kro.awesometic.plankhelper.plank.timer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.data.LapTime;
@@ -10,6 +15,7 @@ import kr.kro.awesometic.plankhelper.data.PlankLog;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
 import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
+import kr.kro.awesometic.plankhelper.util.LogManager;
 import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -66,6 +72,33 @@ public class TimerPresenter implements TimerContract.Presenter {
         mTimerView.showTimer();
     }
 
+    private void showSavePlankLogDialog() {
+        new MaterialDialog.Builder(mActivityContext)
+                .title(R.string.plank_dialog_save_planklog_title)
+                .content(R.string.plank_dialog_save_planklog_content)
+                .positiveText(R.string.plank_dialog_save_planklog_positive)
+                .negativeText(R.string.plank_dialog_save_planklog_negative)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        savePlankLogData();
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        LogManager.d("onDismiss");
+                        updateWidgetsOnFragment(0);
+                        mTimerView.setAllNumberPickersEnabled(true);
+                        mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
+                        mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
+
+                        mIsStart = false;
+                    }
+                })
+                .show();
+    }
+
     @Override
     public void start() {
         initTimerPresenter();
@@ -116,12 +149,16 @@ public class TimerPresenter implements TimerContract.Presenter {
                         break;
 
                     case Constants.SERVICE_WHAT.TIMER_RESET:
-                        updateWidgetsOnFragment(0);
-                        mTimerView.setAllNumberPickersEnabled(true);
-                        mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
-                        mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
+                        if (mIsStart) {
+                            showSavePlankLogDialog();
+                        } else {
+                            updateWidgetsOnFragment(0);
+                            mTimerView.setAllNumberPickersEnabled(true);
+                            mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
+                            mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
 
-                        mIsStart = false;
+                            mIsStart = false;
+                        }
                         break;
 
                     default:
@@ -143,12 +180,12 @@ public class TimerPresenter implements TimerContract.Presenter {
         final int resultMin = Integer.valueOf(resultTimeFormatSplit[1]);
         final int resultSec = Integer.valueOf(resultTimeFormatSplit[2].split("\\.")[0]);
 
-        String currentTimeFormat = TimeUtils.mSecToTimeFormat(mSec + 1000);
+        final String currentTimeFormat = TimeUtils.mSecToTimeFormat(mSec + 1000);
 
-        if (mTimerView.getTimeString().equals(currentTimeFormat)) {
-            ((Activity) mActivityContext).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+        ((Activity) mActivityContext).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mTimerView.getTimeString().equals(currentTimeFormat)) {
                     if (mTimerView.getHour() > resultHour) {
                         mTimerView.numberPickerChangeValueByOne(Constants.NUMBERPICKER_TYPE.HOUR, false);
                         mTimerView.numberPickerChangeValueByOne(Constants.NUMBERPICKER_TYPE.MIN, false);
@@ -156,21 +193,16 @@ public class TimerPresenter implements TimerContract.Presenter {
                     } else if (mTimerView.getMin() > resultMin) {
                         mTimerView.numberPickerChangeValueByOne(Constants.NUMBERPICKER_TYPE.MIN, false);
                         mTimerView.numberPickerChangeValueByOne(Constants.NUMBERPICKER_TYPE.SEC, false);
-                    } else if ((mTimerView.getSec() > resultSec) && (mSec != 0)) {
+                    } else if ((mTimerView.getSec() > resultSec) && resultSec >= 0) {
                         mTimerView.numberPickerChangeValueByOne(Constants.NUMBERPICKER_TYPE.SEC, false);
                     }
-                }
-            });
-        } else {
-            ((Activity) mActivityContext).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+                } else {
                     mTimerView.setHour(resultHour);
                     mTimerView.setMin(resultMin);
                     mTimerView.setSec(resultSec);
                 }
-            });
-        }
+            }
+        });
     }
 
     public void addLapTimeItem(long passedMSec, long intervalMSec) {
@@ -249,21 +281,5 @@ public class TimerPresenter implements TimerContract.Presenter {
 
     public long getStartTimeMSec() {
         return TimeUtils.timeFormatToMSec(mTimerView.getTimeString());
-    }
-
-
-    public void plankComplete() {
-        ((Activity) mActivityContext).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mTimerView.setHour(0);
-                mTimerView.setMin(0);
-                mTimerView.setSec(0);
-
-                mTimerView.setAllNumberPickersEnabled(true);
-                mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
-                mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
-            }
-        });
     }
 }
