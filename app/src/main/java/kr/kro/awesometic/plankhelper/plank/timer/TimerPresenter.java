@@ -74,33 +74,6 @@ public class TimerPresenter implements TimerContract.Presenter {
         mTimerView.showTimer();
     }
 
-    private void showSavePlankLogDialog() {
-        new MaterialDialog.Builder(mActivityContext)
-                .title(R.string.plank_dialog_save_planklog_title)
-                .content(R.string.plank_dialog_save_planklog_content)
-                .positiveText(R.string.plank_dialog_save_planklog_positive)
-                .negativeText(R.string.plank_dialog_save_planklog_negative)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        savePlankLogData();
-                    }
-                })
-                .dismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        LogManager.d("onDismiss");
-                        updateWidgetsOnFragment(0);
-                        mTimerView.setAllNumberPickersEnabled(true);
-                        mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
-                        mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
-
-                        mIsStart = false;
-                    }
-                })
-                .show();
-    }
-
     @Override
     public void start() {
         initTimerPresenter();
@@ -151,16 +124,12 @@ public class TimerPresenter implements TimerContract.Presenter {
                         break;
 
                     case Constants.SERVICE_WHAT.TIMER_RESET:
-                        if (mIsStart) {
-                            showSavePlankLogDialog();
-                        } else {
-                            updateWidgetsOnFragment(0);
-                            mTimerView.setAllNumberPickersEnabled(true);
-                            mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
-                            mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
+                        updateWidgetsOnFragment(0);
+                        mTimerView.setAllNumberPickersEnabled(true);
+                        mTimerView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_timer_on));
+                        mTimerView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_timer_reset));
 
-                            mIsStart = false;
-                        }
+                        mIsStart = false;
                         break;
 
                     default:

@@ -74,31 +74,6 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
         mStopwatchView.showStopwatch();
     }
 
-    private void showSavePlankLogDialog() {
-        new MaterialDialog.Builder(mActivityContext)
-                .title(R.string.plank_dialog_save_planklog_title)
-                .content(R.string.plank_dialog_save_planklog_content)
-                .positiveText(R.string.plank_dialog_save_planklog_positive)
-                .negativeText(R.string.plank_dialog_save_planklog_negative)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        savePlankLogData();
-                    }
-                })
-                .dismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        updateWidgetsOnFragment(0);
-                        mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
-                        mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
-
-                        mIsStart = false;
-                    }
-                })
-                .show();
-    }
-
     @Override
     public void start() {
         initStopwatchPresenter();
@@ -148,15 +123,11 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
                         break;
 
                     case Constants.SERVICE_WHAT.STOPWATCH_RESET:
-                        if (mIsStart) {
-                            showSavePlankLogDialog();
-                        } else {
-                            updateWidgetsOnFragment(0);
-                            mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
-                            mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
+                        updateWidgetsOnFragment(0);
+                        mStopwatchView.setOnOffButtonValue(mActivityContext.getString(R.string.plank_stopwatch_on));
+                        mStopwatchView.setResetLapButtonValue(mActivityContext.getString(R.string.plank_stopwatch_reset));
 
-                            mIsStart = false;
-                        }
+                        mIsStart = false;
                         break;
 
                     default:

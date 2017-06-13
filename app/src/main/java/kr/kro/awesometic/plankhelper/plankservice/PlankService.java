@@ -72,6 +72,8 @@ public class PlankService extends Service {
         int getLapCount(int method);
         long getLastLapMSec(int method);
 
+        void savePlankLog(int method);
+
         void appExit();
     }
     private IPlankCallback mPlankCallback;
@@ -369,7 +371,35 @@ public class PlankService extends Service {
                 }
                 case Constants.SERVICE_WHAT.STOPWATCH_RESET:
                 case Constants.SERVICE_WHAT.TIMER_RESET: {
-                    resetService(method);
+                    if (mTimerTaskMSec > 0) {
+                        Intent dismissNotificationBarIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+                        getApplicationContext().sendBroadcast(dismissNotificationBarIntent);
+
+                        MaterialDialog materialDialog = new MaterialDialog.Builder(mServiceContext)
+                                .title(R.string.plank_dialog_save_planklog_title)
+                                .content(R.string.plank_dialog_save_planklog_content)
+                                .positiveText(R.string.plank_dialog_save_planklog_positive)
+                                .negativeText(R.string.plank_dialog_save_planklog_negative)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        mPlankCallback.savePlankLog(method);
+                                    }
+                                })
+                                .dismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        resetService(method);
+                                    }
+                                })
+                                .cancelable(false)
+                                .build();
+
+                        materialDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                        materialDialog.show();
+                    } else {
+                        resetService(method);
+                    }
                     break;
                 }
                 case Constants.SERVICE_WHAT.STOPWATCH_LAP:
@@ -544,11 +574,10 @@ public class PlankService extends Service {
         PlankNotificationManager.reset(getApplicationContext(), method);
         mPlankCallback.reset(method);
 
-        if (mIsTimerTaskRunning) {
-            mIsTimerTaskRunning = false;
-
+        mIsTimerTaskRunning = false;
+        if (mTimer != null)
             mTimer.cancel();
-        }
+
         mTimerTaskMSec = 0;
         mTimerTaskIntervalMSec = 0;
         mTimerStartTimeMSec = 0;

@@ -212,6 +212,21 @@ public class PlankServiceManager {
         }
 
         @Override
+        public void savePlankLog(int method) {
+            switch (method) {
+                case Constants.WORK_METHOD.STOPWATCH:
+                    mStopwatchPresenter.savePlankLogData();
+                    break;
+                case Constants.WORK_METHOD.TIMER:
+                    mTimerPresenter.savePlankLogData();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        @Override
         public void appExit() {
             unbindService(mActivityContext);
             ActivityCompat.finishAffinity((Activity) mActivityContext);

@@ -1,9 +1,14 @@
 package kr.kro.awesometic.plankhelper.plank;
 
+import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +34,7 @@ import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.settings.SettingsActivity;
 import kr.kro.awesometic.plankhelper.statistics.StatisticsActivity;
 import kr.kro.awesometic.plankhelper.util.Constants;
+import kr.kro.awesometic.plankhelper.util.LogManager;
 import kr.kro.awesometic.plankhelper.util.SharedPreferenceManager;
 import kr.kro.awesometic.plankhelper.util.Singleton;
 
@@ -131,6 +137,15 @@ public class PlankActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            openOverlaySettings();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         mPlankServiceManager.plankActivityDestroyed();
 
@@ -208,5 +223,16 @@ public class PlankActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void openOverlaySettings() {
+        final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+        try {
+            startActivityForResult(intent, 1207);
+        } catch (ActivityNotFoundException e) {
+            LogManager.e(e.getMessage());
+        }
     }
 }
