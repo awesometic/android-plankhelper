@@ -3,6 +3,7 @@ package kr.kro.awesometic.plankhelper.plankservice;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
@@ -12,7 +13,13 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -228,7 +235,7 @@ public class PlankService extends Service {
                                 @Override
                                 public void run() {
                                     if (mTimerTaskMSec == 0) {
-                                        resetService(method);
+                                        timerTaskCommand(method, Constants.SERVICE_WHAT.TIMER_RESET);
                                     } else {
                                         mTimerTaskMSec--;
                                         mTimerTaskIntervalMSec++;
@@ -330,7 +337,7 @@ public class PlankService extends Service {
                                 @Override
                                 public void run() {
                                     if (mTimerTaskMSec == 0) {
-                                        resetService(method);
+                                        timerTaskCommand(method, Constants.SERVICE_WHAT.TIMER_RESET);
                                     } else {
                                         mTimerTaskMSec--;
                                         mTimerTaskIntervalMSec++;
