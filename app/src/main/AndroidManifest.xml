@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".plank.PlankActivity">
+            android:name=".plank.PlankActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
