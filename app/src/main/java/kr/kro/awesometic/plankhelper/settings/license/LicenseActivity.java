@@ -37,6 +37,7 @@ public class LicenseActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_butterknife));
+        tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_dexter));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_materialviewpager));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_materialcalendarview));
         tvLicense.append(getResources().getString(R.string.settings_app_opensource_license_materialdialogs));
