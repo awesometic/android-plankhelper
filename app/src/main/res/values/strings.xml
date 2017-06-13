@@ -46,6 +46,9 @@
     <string name="plank_timer_notification_title_ready">플랭크 - 타이머 준비</string>
     <string name="plank_timer_notification_title_ongoing">플랭크 - 타이머 진행 중</string>
 
+    <string name="plank_toast_save_planklog_success">플랭크 기록이 저장되었습니다.</string>
+    <string name="plank_toast_save_planklog_fail">플랭크 기록 저장에 실패했습니다.</string>
+
     <string name="plank_dialog_save_planklog_title">플랭크 기록을 저장할까요?</string>
     <string name="plank_dialog_save_planklog_content">
         <b>확인</b>을 누르시면 이번에 수행한 플랭크 기록을 LAP 기록과 함께 저장해 <b>통계</b>화면을 통해서 확인하실 수 있습니다.\n

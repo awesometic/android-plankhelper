@@ -124,7 +124,7 @@ public class PlankLogsLocalDataSource implements PlankLogsDataSource {
     }
 
     @Override
-    public void savePlankLog(@NonNull PlankLog plankLog) {
+    public void savePlankLog(@NonNull PlankLog plankLog, @NonNull SavePlankLogCallback callback) {
         checkNotNull(plankLog);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -135,7 +135,11 @@ public class PlankLogsLocalDataSource implements PlankLogsDataSource {
         values.put(PlankLogEntry.COLUMN_NAME_METHOD, plankLog.getMethod());
         values.put(PlankLogEntry.COLUMN_NAME_LAP_COUNT, plankLog.getLapCount());
 
-        db.insert(PlankLogEntry.TABLE_NAME, null, values);
+        if (db.insert(PlankLogEntry.TABLE_NAME, null, values) > -1) {
+            callback.onSavePlankLog(true);
+        } else {
+            callback.onSavePlankLog(false);
+        }
 
         db.close();
     }

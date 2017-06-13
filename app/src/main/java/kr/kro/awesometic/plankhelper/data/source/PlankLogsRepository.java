@@ -99,10 +99,10 @@ public class PlankLogsRepository implements PlankLogsDataSource {
     }
 
     @Override
-    public void savePlankLog(@NonNull PlankLog plankLog) {
+    public void savePlankLog(@NonNull PlankLog plankLog, @NonNull SavePlankLogCallback callback) {
         checkNotNull(plankLog);
 
-        mPlankLogsLocalDataSource.savePlankLog(plankLog);
+        mPlankLogsLocalDataSource.savePlankLog(plankLog, callback);
 
         if (mCachedPlankLogs == null) {
             mCachedPlankLogs = new LinkedHashMap<>();
@@ -141,7 +141,12 @@ public class PlankLogsRepository implements PlankLogsDataSource {
     private void refreshLocalDataSource(List<PlankLog> plankLogs) {
         mPlankLogsLocalDataSource.deleteAllPlankLogs();
         for (PlankLog plankLog : plankLogs) {
-            mPlankLogsLocalDataSource.savePlankLog(plankLog);
+            mPlankLogsLocalDataSource.savePlankLog(plankLog, new SavePlankLogCallback() {
+                @Override
+                public void onSavePlankLog(boolean isSuccess) {
+
+                }
+            });
         }
     }
 

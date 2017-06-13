@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -12,6 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.data.LapTime;
 import kr.kro.awesometic.plankhelper.data.PlankLog;
+import kr.kro.awesometic.plankhelper.data.source.PlankLogsDataSource;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
 import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
@@ -249,7 +251,24 @@ public class TimerPresenter implements TimerContract.Presenter {
                 mLapTimeListViewAdapter.getAllItems()
         );
 
-        mPlankLogsRepository.savePlankLog(plankLog);
+        mPlankLogsRepository.savePlankLog(plankLog, new PlankLogsDataSource.SavePlankLogCallback() {
+            @Override
+            public void onSavePlankLog(boolean isSuccess) {
+                if (isSuccess) {
+                    Toast.makeText(
+                            mActivityContext,
+                            mActivityContext.getString(R.string.plank_toast_save_planklog_success),
+                            Toast.LENGTH_SHORT
+                    ).show();
+                } else {
+                    Toast.makeText(
+                            mActivityContext,
+                            mActivityContext.getString(R.string.plank_toast_save_planklog_fail),
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+            }
+        });
 
         if (lapCount > 0) {
             mPlankLogsRepository.saveLapTimes(plankLog.getId(), mLapTimeListViewAdapter.getAllItems());

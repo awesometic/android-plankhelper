@@ -27,11 +27,16 @@ public interface PlankLogsDataSource {
         void onDataNotAvailable();
     }
 
+    interface SavePlankLogCallback {
+
+        void onSavePlankLog(boolean isSuccess);
+    }
+
     void getPlankLogs(@NonNull LoadPlankLogsCallback callback);
 
     void getPlankLog(@NonNull String plankLogId, @NonNull GetPlankLogCallback callback);
 
-    void savePlankLog(@NonNull PlankLog plankLog);
+    void savePlankLog(@NonNull PlankLog plankLog, @NonNull SavePlankLogCallback callback);
 
     void deletePlankLog(@NonNull String plankLogId);
 
