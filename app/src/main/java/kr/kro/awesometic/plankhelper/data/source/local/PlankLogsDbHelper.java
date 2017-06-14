@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class PlankLogsDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "PlankLog.db";
 
     private static final String SQL_CREATE_PLANKLOG_ENTRIES =
@@ -27,11 +27,11 @@ public class PlankLogsDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + PlankLogsPersistentContract.LapTimeEntry.TABLE_NAME  + " (" +
                     PlankLogsPersistentContract.LapTimeEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_ENTRY_ID + " TEXT NOT NULL, " +
-                    PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_PARENT_ENTRY_ID + " TEXT NOT NULL, " +
+                    PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_PARENT_ENTRY_ID + " INTEGER NOT NULL, " +
                     PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_ORDER_NUMBER + " INTEGER NOT NULL, " +
-                    PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_PASSED_TIME + " TEXT NOT NULL, " +
-                    PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_LEFT_TIME + " TEXT, " +
-                    PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_INTERVAL + " TEXT NOT NULL " +
+                    PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_PASSED_TIME + " INTEGER NOT NULL, " +
+                    PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_LEFT_TIME + " INTEGER, " +
+                    PlankLogsPersistentContract.LapTimeEntry.COLUMN_NAME_INTERVAL + " INTEGER NOT NULL " +
                     " )";
     
     public PlankLogsDbHelper(Context context) {

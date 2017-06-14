@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import kr.kro.awesometic.plankhelper.data.LapTime;
@@ -15,6 +16,7 @@ import kr.kro.awesometic.plankhelper.data.PlankLog;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsDataSource;
 import kr.kro.awesometic.plankhelper.data.source.local.PlankLogsPersistentContract.PlankLogEntry;
 import kr.kro.awesometic.plankhelper.data.source.local.PlankLogsPersistentContract.LapTimeEntry;
+import kr.kro.awesometic.plankhelper.util.Constants;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -58,7 +60,66 @@ public class PlankLogsLocalDataSource implements PlankLogsDataSource {
         if (c != null && c.getCount() > 0) {
             while (c.moveToNext()) {
                 String itemId = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_ENTRY_ID));
-                String datetime = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DATETIME));
+                int datetime = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DATETIME));
+                int duration = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DURATION));
+                String method = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_METHOD));
+                int lapCount = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_LAP_COUNT));
+
+                PlankLog plankLog = new PlankLog(itemId, datetime, duration, method, lapCount, new ArrayList<LapTime>());
+                plankLogs.add(plankLog);
+            }
+        }
+        if (c != null) {
+            c.close();
+        }
+
+        db.close();
+
+        if (plankLogs.isEmpty()) {
+            callback.onDataNotAvailable();
+        } else {
+            callback.onPlankLogsLoaded(plankLogs);
+        }
+    }
+
+    @Override
+    public void getPlankLogs(@NonNull Calendar calendar, int option, @NonNull LoadPlankLogsCallback callback) {
+        List<PlankLog> plankLogs = new ArrayList<PlankLog>();
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                PlankLogEntry.COLUMN_NAME_ENTRY_ID,
+                PlankLogEntry.COLUMN_NAME_DATETIME,
+                PlankLogEntry.COLUMN_NAME_DURATION,
+                PlankLogEntry.COLUMN_NAME_METHOD,
+                PlankLogEntry.COLUMN_NAME_LAP_COUNT
+        };
+
+        String selection = "";
+
+        switch (option) {
+            case Constants.DATABASE_GETPLANKLOGS_OPTION.FROM_PARAM_YEAR:
+                selection = PlankLogEntry.COLUMN_NAME_DATETIME + " > " + calendar.get(Calendar.YEAR);
+                break;
+
+            case Constants.DATABASE_GETPLANKLOGS_OPTION.FROM_PARAM_YEAR_MONTH:
+
+                break;
+
+            case Constants.DATABASE_GETPLANKLOGS_OPTION.FROM_PARAM_YEAR_MONTH_DATE:
+
+                break;
+
+            default:
+                break;
+        }
+
+        Cursor c = db.query(PlankLogEntry.TABLE_NAME, projection, selection, null, null, null, null);
+
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
+                String itemId = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_ENTRY_ID));
+                int datetime = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DATETIME));
                 int duration = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DURATION));
                 String method = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_METHOD));
                 int lapCount = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_LAP_COUNT));
@@ -101,12 +162,12 @@ public class PlankLogsLocalDataSource implements PlankLogsDataSource {
 
         if (c != null && c.getCount() > 0) {
             c.moveToFirst();
-             String itemId = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_ENTRY_ID));
-             String datetime = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DATETIME));
-             int duration = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DURATION));
-             String method = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_METHOD));
-             int lapCount = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_LAP_COUNT));
-            
+            String itemId = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_ENTRY_ID));
+            int datetime = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DATETIME));
+            int duration = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_DURATION));
+            String method = c.getString(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_METHOD));
+            int lapCount = c.getInt(c.getColumnIndexOrThrow(PlankLogEntry.COLUMN_NAME_LAP_COUNT));
+
             plankLog = new PlankLog(itemId, datetime, duration, method, lapCount, new ArrayList<LapTime>());
         }
 
@@ -130,7 +191,7 @@ public class PlankLogsLocalDataSource implements PlankLogsDataSource {
 
         ContentValues values = new ContentValues();
         values.put(PlankLogEntry.COLUMN_NAME_ENTRY_ID, plankLog.getId());
-        values.put(PlankLogEntry.COLUMN_NAME_DATETIME, plankLog.getDatetime());
+        values.put(PlankLogEntry.COLUMN_NAME_DATETIME, plankLog.getDatetimeMSec());
         values.put(PlankLogEntry.COLUMN_NAME_DURATION, plankLog.getDuration());
         values.put(PlankLogEntry.COLUMN_NAME_METHOD, plankLog.getMethod());
         values.put(PlankLogEntry.COLUMN_NAME_LAP_COUNT, plankLog.getLapCount());
@@ -189,9 +250,9 @@ public class PlankLogsLocalDataSource implements PlankLogsDataSource {
                 String entryId = c.getString(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_ENTRY_ID));
                 String parentEntryId = c.getString(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_PARENT_ENTRY_ID));
                 int orderNumber = c.getInt(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_ORDER_NUMBER));
-                String passedTime = c.getString(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_PASSED_TIME));
-                String leftTime = c.getString(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_LEFT_TIME));
-                String interval = c.getString(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_INTERVAL));
+                int passedTime = c.getInt(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_PASSED_TIME));
+                int leftTime = c.getInt(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_LEFT_TIME));
+                int interval = c.getInt(c.getColumnIndexOrThrow(LapTimeEntry.COLUMN_NAME_INTERVAL));
 
                 LapTime lapTime = new LapTime(entryId, parentEntryId, orderNumber, passedTime, leftTime, interval);
                 lapTimes.add(lapTime);

@@ -63,7 +63,6 @@ public class PlankActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         SharedPreferenceManager.init(getApplicationContext());
-
         // 싱글톤 설정
         // 임시로 일요일(Calendar.SUNDAY)
         mSingleton.setStartOfTheWeek(1);

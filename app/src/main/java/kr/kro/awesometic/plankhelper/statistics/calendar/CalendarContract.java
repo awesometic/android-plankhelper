@@ -14,8 +14,13 @@ public interface CalendarContract {
         void showLoading();
         void showCalendar();
 
-        Object getApplicationContext();
+        Object getActivityContext();
         void setRecyclerViewAdapter(Object recyclerViewAdapter);
+
+        void setCalendarMinDate(int year, int month, int date);
+        void setCalendarMaxDate(int year, int month, int date);
+
+        void addCalendarDecorator(Object decorator);
 
         void bindViewsFromViewHolder();
     }
@@ -23,5 +28,7 @@ public interface CalendarContract {
     interface Presenter extends BasePresenter {
 
         void bindViewsFromViewHolderToFrag();
+
+        void onMonthChanged(Object calendarDay);
     }
 }

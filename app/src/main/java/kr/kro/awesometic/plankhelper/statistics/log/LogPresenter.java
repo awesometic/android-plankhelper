@@ -26,7 +26,7 @@ public class LogPresenter implements LogContract.Presenter {
     private final LogContract.View mLogView;
 
     private RecyclerViewAdapter mRecyclerViewAdapter;
-    private Context mApplicationContext;
+    private Context mActivityContext;
 
     public LogPresenter(@NonNull PlankLogsRepository plankLogsRepository,
                              @NonNull LogContract.View stopwatchView) {
@@ -45,7 +45,7 @@ public class LogPresenter implements LogContract.Presenter {
     }
 
     private void initPresenter() {
-        mApplicationContext = (Context) mLogView.getApplicationContext();
+        mActivityContext = (Context) mLogView.getActivityContext();
     }
 
     private void initView() {

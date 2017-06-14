@@ -14,7 +14,7 @@ public interface ChartContract {
         void showLoading();
         void showChart();
 
-        Object getApplicationContext();
+        Object getActivityContext();
         void setRecyclerViewAdapter(Object recyclerViewAdapter);
 
         void bindViewsFromViewHolder();

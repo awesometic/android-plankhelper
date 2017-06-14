@@ -14,8 +14,7 @@ public class PlankLog {
     @NonNull
     private final String mId;
 
-    @NonNull
-    private final String mDatetime;
+    private final long mDatetimeMSec;
 
     private final long mDuration;
 
@@ -27,13 +26,13 @@ public class PlankLog {
     @NonNull
     private ArrayList<LapTime> mLapTimes;
 
-    public PlankLog(@NonNull String datetime, long duration, @NonNull String method, int lapCount, @NonNull ArrayList<LapTime> lapTimes) {
-        this(UUID.randomUUID().toString(), datetime, duration, method, lapCount, lapTimes);
+    public PlankLog(long datetimeMSec, long duration, @NonNull String method, int lapCount, @NonNull ArrayList<LapTime> lapTimes) {
+        this(UUID.randomUUID().toString(), datetimeMSec, duration, method, lapCount, lapTimes);
     }
 
-    public PlankLog(@NonNull String id, @NonNull String datetime, long duration, @NonNull String method, int lapCount, @NonNull ArrayList<LapTime> lapTimes) {
+    public PlankLog(@NonNull String id, long datetimeMSec, long duration, @NonNull String method, int lapCount, @NonNull ArrayList<LapTime> lapTimes) {
         mId = id;
-        mDatetime = datetime;
+        mDatetimeMSec = datetimeMSec;
         mDuration = duration;
         mMethod = method;
         mLapCount = lapCount;
@@ -45,9 +44,8 @@ public class PlankLog {
         return mId;
     }
 
-    @NonNull
-    public String getDatetime() {
-        return mDatetime;
+    public long getDatetimeMSec() {
+        return mDatetimeMSec;
     }
 
     public long getDuration() {
@@ -67,13 +65,12 @@ public class PlankLog {
         return mLapTimes;
     }
 
-    @NonNull
     public void setLapTimes(ArrayList<LapTime> lapTimes) {
         mLapTimes = lapTimes;
     }
 
     @Override
     public String toString() {
-        return "Plank log performed at " + mDatetime + " with " + mLapCount + " lap times";
+        return "Plank log performed at " + mDatetimeMSec + " with " + mLapCount + " lap times";
     }
 }

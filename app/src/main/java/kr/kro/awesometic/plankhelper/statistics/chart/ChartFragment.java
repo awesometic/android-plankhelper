@@ -71,7 +71,7 @@ public class ChartFragment extends Fragment implements ChartContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContext = getActivity().getApplicationContext();
+        mContext = getActivity();
         mIsViewsBound = false;
     }
 
@@ -128,7 +128,7 @@ public class ChartFragment extends Fragment implements ChartContract.View {
     }
 
     @Override
-    public Object getApplicationContext() {
+    public Object getActivityContext() {
         return mContext;
     }
 

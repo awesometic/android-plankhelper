@@ -4,12 +4,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import kr.kro.awesometic.plankhelper.data.LapTime;
 import kr.kro.awesometic.plankhelper.data.PlankLog;
+import kr.kro.awesometic.plankhelper.util.Constants;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -67,6 +69,13 @@ public class PlankLogsRepository implements PlankLogsDataSource {
                 }
             });
         }
+    }
+
+    @Override
+    public void getPlankLogs(@NonNull Calendar calendar, int option, @NonNull LoadPlankLogsCallback callback) {
+        checkNotNull(callback);
+
+        mPlankLogsLocalDataSource.getPlankLogs(calendar, option, callback);
     }
 
     @Override

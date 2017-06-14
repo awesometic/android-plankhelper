@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 
 import java.util.UUID;
 
+import kr.kro.awesometic.plankhelper.util.Constants;
+
 /**
  * Created by Awesometic on 2017-04-18.
  */
@@ -20,33 +22,30 @@ public class LapTime {
     // 순서
     private final int mOrderNumber;
 
-    // 각 시간은 HH:mm:ss.SSS 포맷
-    @NonNull
-    private final String mPassedTime;
+    // 각 시간은 밀리초
+    private final long mPassedTimeMSec;
 
     // 스탑워치 모드일 경우 null
-    @Nullable
-    private final String mLeftTime;
+    private final long mLeftTimeMSec;
 
     // 바로 전 기록과 시간차
-    @NonNull
-    private final String mInterval;
+    private final long mIntervalMSec;
 
-    public LapTime(@NonNull String parentId, int orderNumber, @NonNull String passedTime, @NonNull String interval) {
-        this(UUID.randomUUID().toString(), parentId, orderNumber, passedTime, null, interval);
+    public LapTime(@NonNull String parentId, int orderNumber, long passedTimeMSec, long intervalMSec) {
+        this(UUID.randomUUID().toString(), parentId, orderNumber, passedTimeMSec, Constants.LAPTIME_ENTRY.NULL_INTERVAL, intervalMSec);
     }
 
-    public LapTime(@NonNull String parentId, int orderNumber, @NonNull String passedTime, @NonNull String leftTime, @NonNull String interval) {
-        this(UUID.randomUUID().toString(), parentId, orderNumber, passedTime, leftTime, interval);
+    public LapTime(@NonNull String parentId, int orderNumber, long passedTimeMSec, long leftTimeMSec, long intervalMSec) {
+        this(UUID.randomUUID().toString(), parentId, orderNumber, passedTimeMSec, leftTimeMSec, intervalMSec);
     }
 
-    public LapTime(@NonNull String id, @NonNull String parentId, int orderNumber, @NonNull String passedTime, @NonNull String leftTime, @NonNull String interval) {
+    public LapTime(@NonNull String id, @NonNull String parentId, int orderNumber, long passedTimeMSec, long leftTimeMSec, long intervalMSec) {
         mId = id;
         mParentId = parentId;
         mOrderNumber = orderNumber;
-        mPassedTime = passedTime;
-        mLeftTime = leftTime;
-        mInterval = interval;
+        mPassedTimeMSec = passedTimeMSec;
+        mLeftTimeMSec = leftTimeMSec;
+        mIntervalMSec = intervalMSec;
     }
 
     @NonNull
@@ -63,18 +62,15 @@ public class LapTime {
         return mOrderNumber;
     }
 
-    @NonNull
-    public String getPassedTime() {
-        return mPassedTime;
+    public long getPassedTime() {
+        return mPassedTimeMSec;
     }
 
-    @Nullable
-    public String getLeftTime() {
-        return mLeftTime;
+    public long getLeftTime() {
+        return mLeftTimeMSec;
     }
 
-    @NonNull
-    public String getInterval() {
-        return mInterval;
+    public long getInterval() {
+        return mIntervalMSec;
     }
 }

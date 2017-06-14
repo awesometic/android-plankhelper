@@ -28,7 +28,7 @@ public class ChartPresenter implements ChartContract.Presenter {
     private final ChartContract.View mChartView;
 
     private RecyclerViewAdapter mRecyclerViewAdapter;
-    private Context mApplicationContext;
+    private Context mActivityContext;
 
     public ChartPresenter(@NonNull PlankLogsRepository plankLogsRepository,
                              @NonNull ChartContract.View stopwatchView) {
@@ -45,7 +45,7 @@ public class ChartPresenter implements ChartContract.Presenter {
     }
 
     private void initPresenter() {
-        mApplicationContext = (Context) mChartView.getApplicationContext();
+        mActivityContext = (Context) mChartView.getActivityContext();
     }
 
     private void initView() {

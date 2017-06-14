@@ -2,10 +2,12 @@ package kr.kro.awesometic.plankhelper.data.source;
 
 import android.support.annotation.NonNull;
 
+import java.util.Calendar;
 import java.util.List;
 
 import kr.kro.awesometic.plankhelper.data.LapTime;
 import kr.kro.awesometic.plankhelper.data.PlankLog;
+import kr.kro.awesometic.plankhelper.util.Constants;
 
 /**
  * Created by Awesometic on 2017-04-16.
@@ -33,6 +35,7 @@ public interface PlankLogsDataSource {
     }
 
     void getPlankLogs(@NonNull LoadPlankLogsCallback callback);
+    void getPlankLogs(@NonNull Calendar calendar, int option, @NonNull LoadPlankLogsCallback callback);
 
     void getPlankLog(@NonNull String plankLogId, @NonNull GetPlankLogCallback callback);
 

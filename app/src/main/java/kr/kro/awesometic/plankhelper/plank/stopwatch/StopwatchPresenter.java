@@ -19,6 +19,7 @@ import kr.kro.awesometic.plankhelper.data.source.PlankLogsDataSource;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
 import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
+import kr.kro.awesometic.plankhelper.util.Singleton;
 import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -31,6 +32,8 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
     private final PlankLogsRepository mPlankLogsRepository;
     private final StopwatchContract.View mStopwatchView;
+
+    private Singleton mSingleton = Singleton.getInstance();
 
     public interface IStopwatchPresenterCallback {
         void stopwatchCommandToService(int method, int what);
@@ -163,14 +166,12 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
     public void addLapTimeItem(long passedMSec, long intervalMSec) {
         int order = mLapTimeListViewAdapter.getCount() + 1;
-        String passedTime = TimeUtils.mSecToTimeFormat(passedMSec);
-        String interval = TimeUtils.mSecToTimeFormat(intervalMSec);
 
         final LapTime lapTime = new LapTime(
                 Constants.DATABASE.EMPTY_PARENT_ID,
                 order,
-                passedTime,
-                interval
+                passedMSec,
+                intervalMSec
         );
 
         ((Activity) mActivityContext).runOnUiThread(new Runnable() {
@@ -196,7 +197,7 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
         int lapCount = mLapTimeListViewAdapter.getCount();
 
         PlankLog plankLog = new PlankLog(
-                TimeUtils.getCurrentDatetimeFormatted(),
+                TimeUtils.getCurrentDatetimeMSec(),
                 TimeUtils.timeFormatToMSec(mStopwatchView.getTimeString()),
                 Constants.DATABASE.METHOD_STOPWATCH,
                 lapCount,
@@ -207,6 +208,11 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
             @Override
             public void onSavePlankLog(boolean isSuccess) {
                 if (isSuccess) {
+
+                    if (mSingleton.getFirstPlankDatetime().equals(Constants.SINGLETON.NEVER_PERFORMED)) {
+                        mSingleton.setFirstPlankDatetime(TimeUtils.getCurrentDatetimeFormatted());
+                    }
+
                     Toast.makeText(
                             mActivityContext,
                             mActivityContext.getString(R.string.plank_toast_save_planklog_success),

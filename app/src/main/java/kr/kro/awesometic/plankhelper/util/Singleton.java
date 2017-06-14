@@ -11,11 +11,22 @@ public class Singleton {
         return ourInstance;
     }
 
+    private String mFirstPlankDatetime;
+
     private int mStartOfTheWeek;
     private int mLineChartUnitOfAxisY;
 
     private Singleton() {
+        mFirstPlankDatetime = Constants.SINGLETON.NEVER_PERFORMED;
         mStartOfTheWeek = 0;
+    }
+
+    public String getFirstPlankDatetime() {
+        return mFirstPlankDatetime;
+    }
+
+    public void setFirstPlankDatetime(String mFirstPlankDatetime) {
+        this.mFirstPlankDatetime = mFirstPlankDatetime;
     }
 
     public int getStartOfTheWeek() {

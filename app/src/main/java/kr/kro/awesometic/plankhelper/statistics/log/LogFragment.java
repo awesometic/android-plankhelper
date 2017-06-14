@@ -55,7 +55,7 @@ public class LogFragment extends Fragment implements LogContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContext = getActivity().getApplicationContext();
+        mContext = getActivity();
         mIsViewsBound = false;
     }
 
@@ -112,7 +112,7 @@ public class LogFragment extends Fragment implements LogContract.View {
     }
 
     @Override
-    public Object getApplicationContext() {
+    public Object getActivityContext() {
         return mContext;
     }
 

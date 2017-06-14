@@ -12,6 +12,31 @@ public class Constants {
         int FOREGROUND_SERVICE = 12071;
     }
 
+    public interface SINGLETON {
+        String NEVER_PERFORMED = "undefined";
+    }
+
+    public interface DATABASE {
+        String EMPTY_PARENT_ID = "empty_parent_id";
+
+        String METHOD_STOPWATCH = "stopwatch";
+        String METHOD_TIMER = "timer";
+    }
+
+    public interface DATABASE_GETPLANKLOGS_OPTION {
+        int FROM_PARAM_YEAR = 0;
+        int FROM_PARAM_YEAR_MONTH = 1;
+        int FROM_PARAM_YEAR_MONTH_DATE = 2;
+
+        int TO_PARAM_YEAR = 3;
+        int TO_PARAM_YEAR_MONTH = 4;
+        int TO_PARAM_YEAR_MONTH_DATE = 5;
+    }
+
+    public interface LAPTIME_ENTRY {
+        int NULL_INTERVAL = -1;
+    }
+
     public interface BROADCAST_ACTION {
         String NOTIFICATION_READY = "kr.kro.awesometic.plankhelper.NOTI_ACTION_NOTIFICATION_READY";
         String APP_EXIT = "kr.kro.awesometic.plankhelper.NOTI_ACTION_APP_EXIT";
@@ -79,12 +104,5 @@ public class Constants {
     public interface COMMON_ANIMATOR_POSITION {
         int RECYCLERVIEW = 0;
         int LOADING = 1;
-    }
-
-    public interface DATABASE {
-        String EMPTY_PARENT_ID = "empty_parent_id";
-
-        String METHOD_STOPWATCH = "stopwatch";
-        String METHOD_TIMER = "timer";
     }
 }

@@ -14,7 +14,7 @@ public interface LogContract {
         void showLoading();
         void showLog();
 
-        Object getApplicationContext();
+        Object getActivityContext();
         void setRecyclerViewAdapter(Object recyclerViewAdapter);
 
         void bindViewsFromViewHolder();

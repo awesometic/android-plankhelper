@@ -26,6 +26,10 @@ public class TimeUtils {
         return simpleDateFormat.format(new Date());
     }
 
+    public static long getCurrentDatetimeMSec() {
+        return new Date().getTime();
+    }
+
     public static String getCurrentDatetimeFormatted() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         simpleDateFormat.setTimeZone(TimeZone.getDefault());

@@ -18,6 +18,7 @@ import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
 import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
 import kr.kro.awesometic.plankhelper.util.LogManager;
+import kr.kro.awesometic.plankhelper.util.Singleton;
 import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -30,6 +31,8 @@ public class TimerPresenter implements TimerContract.Presenter {
 
     private final PlankLogsRepository mPlankLogsRepository;
     private final TimerContract.View mTimerView;
+
+    private Singleton mSingleton = Singleton.getInstance();
 
     public interface ITimerPresenterCallback {
         void timerCommandToService(int method, int what);
@@ -224,6 +227,11 @@ public class TimerPresenter implements TimerContract.Presenter {
             @Override
             public void onSavePlankLog(boolean isSuccess) {
                 if (isSuccess) {
+
+                    if (mSingleton.getFirstPlankDatetime().equals(Constants.SINGLETON.NEVER_PERFORMED)) {
+                        mSingleton.setFirstPlankDatetime(TimeUtils.getCurrentDatetimeFormatted());
+                    }
+
                     Toast.makeText(
                             mActivityContext,
                             mActivityContext.getString(R.string.plank_toast_save_planklog_success),

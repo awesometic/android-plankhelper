@@ -16,9 +16,12 @@ import android.widget.ViewAnimator;
 
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,7 +66,7 @@ public class CalendarFragment extends Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContext = getActivity().getApplicationContext();
+        mContext = getActivity();
         mIsViewsBound = false;
     }
 
@@ -130,7 +133,7 @@ public class CalendarFragment extends Fragment
     }
 
     @Override
-    public Object getApplicationContext() {
+    public Object getActivityContext() {
         return mContext;
     }
 
@@ -140,11 +143,37 @@ public class CalendarFragment extends Fragment
     }
 
     @Override
+    public void setCalendarMinDate(int year, int month, int date) {
+        mMaterialCalendarView.state().edit()
+                .setMinimumDate(CalendarDay.from(year, month, date))
+                .commit();
+    }
+
+    @Override
+    public void setCalendarMaxDate(int year, int month, int date) {
+        mMaterialCalendarView.state().edit()
+                .setMaximumDate(CalendarDay.from(year, month, date))
+                .commit();
+    }
+
+    @Override
+    public void addCalendarDecorator(Object decorator) {
+        mMaterialCalendarView.addDecorator((DayViewDecorator) decorator);
+    }
+
+    @Override
     public void bindViewsFromViewHolder() {
         RecyclerViewAdapter.ViewHolder holder = (RecyclerViewAdapter.ViewHolder) mRecyclerView.findViewHolderForAdapterPosition(0);
 
         if (holder.getItemViewType() == Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD) {
+            mMaterialCalendarView = holder.mMaterialCalendarView;
 
+            mMaterialCalendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
+                @Override
+                public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+                    mPresenter.onMonthChanged(date);
+                }
+            });
         }
     }
 }
