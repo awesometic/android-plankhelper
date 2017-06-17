@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.data.LapTime;
+import kr.kro.awesometic.plankhelper.util.Constants;
 
 /**
  * Created by Awesometic on 2017-04-18.
@@ -60,9 +61,9 @@ public class LapTimeListViewAdapter extends BaseAdapter {
 
         // 아이템 내 각 뷰에 데이터 반영
         orderTextView.setText(String.valueOf(lapTime.getOrderNumber()));
-        passedTextView.setText(lapTime.getPassedTime());
-        leftTextView.setText((lapTime.getLeftTime() == null) ? "" : lapTime.getLeftTime());
-        intervalTextView.setText(lapTime.getInterval());
+        passedTextView.setText(String.valueOf(lapTime.getPassedTimeMSec()));
+        leftTextView.setText((lapTime.getLeftTimeMSec() == Constants.LAPTIME_ENTRY.NULL_INTERVAL) ? "" : "" + lapTime.getLeftTimeMSec());
+        intervalTextView.setText(String.valueOf(lapTime.getIntervalMSec()));
 
         return convertView;
     }

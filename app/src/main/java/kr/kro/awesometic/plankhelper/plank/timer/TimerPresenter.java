@@ -181,16 +181,13 @@ public class TimerPresenter implements TimerContract.Presenter {
 
     public void addLapTimeItem(long passedMSec, long intervalMSec) {
         int order = mLapTimeListViewAdapter.getCount() + 1;
-        String passedTime = TimeUtils.mSecToTimeFormat(passedMSec);
-        String leftTime = TimeUtils.mSecToTimeFormat(mTimerPresenterCallback.getTimerStartMSec() - passedMSec);
-        String interval = TimeUtils.mSecToTimeFormat(intervalMSec);
 
         final LapTime lapTime = new LapTime(
                 Constants.DATABASE.EMPTY_PARENT_ID,
                 order,
-                passedTime,
-                leftTime,
-                interval
+                passedMSec,
+                mTimerPresenterCallback.getTimerStartMSec() - passedMSec,
+                intervalMSec
         );
 
         ((Activity) mActivityContext).runOnUiThread(new Runnable() {
@@ -216,7 +213,7 @@ public class TimerPresenter implements TimerContract.Presenter {
         int lapCount = mLapTimeListViewAdapter.getCount();
 
         PlankLog plankLog = new PlankLog(
-                TimeUtils.getCurrentDatetimeFormatted(),
+                TimeUtils.getCurrentDatetimeMSec(),
                 mTimerPresenterCallback.getTimerStartMSec(),
                 Constants.DATABASE.METHOD_TIMER,
                 lapCount,
@@ -269,8 +266,7 @@ public class TimerPresenter implements TimerContract.Presenter {
 
     public long getLastLapMSec() {
         if (mLapTimeListViewAdapter.getCount() > 0)
-            return TimeUtils.timeFormatToMSec(
-                    mLapTimeListViewAdapter.getItem(mLapTimeListViewAdapter.getCount() - 1).getPassedTime());
+            return mLapTimeListViewAdapter.getItem(mLapTimeListViewAdapter.getCount() - 1).getPassedTimeMSec();
         else
             return 0;
     }

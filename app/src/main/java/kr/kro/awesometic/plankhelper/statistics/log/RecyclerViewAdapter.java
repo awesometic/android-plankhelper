@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +73,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 break;
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY:
 
-                holder.tvDatetime.setText(mPlankLogs.get(position).getDatetime());
+                holder.tvDatetime.setText(new Date(mPlankLogs.get(position).getDatetimeMSec()).toString());
                 holder.tvDuration.setText(String.valueOf(mPlankLogs.get(position).getDuration()));
                 holder.tvMethod.setText(mPlankLogs.get(position).getMethod());
 

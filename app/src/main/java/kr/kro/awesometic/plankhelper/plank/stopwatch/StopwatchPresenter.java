@@ -249,8 +249,7 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
 
     public long getLastLapMSec() {
         if (mLapTimeListViewAdapter.getCount() > 0)
-            return TimeUtils.timeFormatToMSec(
-                    mLapTimeListViewAdapter.getItem(mLapTimeListViewAdapter.getCount() - 1).getPassedTime());
+            return mLapTimeListViewAdapter.getItem(mLapTimeListViewAdapter.getCount() - 1).getPassedTimeMSec();
         else
             return 0;
     }

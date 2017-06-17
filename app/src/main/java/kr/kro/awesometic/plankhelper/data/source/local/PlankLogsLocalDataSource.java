@@ -282,9 +282,9 @@ public class PlankLogsLocalDataSource implements PlankLogsDataSource {
             values.put(LapTimeEntry.COLUMN_NAME_ENTRY_ID, lapTime.getId());
             values.put(LapTimeEntry.COLUMN_NAME_PARENT_ENTRY_ID, plankLogId);
             values.put(LapTimeEntry.COLUMN_NAME_ORDER_NUMBER, lapTime.getOrderNumber());
-            values.put(LapTimeEntry.COLUMN_NAME_PASSED_TIME, lapTime.getPassedTime());
-            values.put(LapTimeEntry.COLUMN_NAME_LEFT_TIME, lapTime.getLeftTime());
-            values.put(LapTimeEntry.COLUMN_NAME_INTERVAL, lapTime.getInterval());
+            values.put(LapTimeEntry.COLUMN_NAME_PASSED_TIME, lapTime.getPassedTimeMSec());
+            values.put(LapTimeEntry.COLUMN_NAME_LEFT_TIME, lapTime.getLeftTimeMSec());
+            values.put(LapTimeEntry.COLUMN_NAME_INTERVAL, lapTime.getIntervalMSec());
 
             db.insert(LapTimeEntry.TABLE_NAME, null, values);
         }

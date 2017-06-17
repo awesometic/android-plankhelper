@@ -119,7 +119,7 @@ public class CalendarFragment extends Fragment
 
     @Override
     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
-
+        mPresenter.onMonthChanged(date);
     }
 
     @Override

@@ -10,7 +10,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -88,7 +92,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         switch (getItemViewType(position)) {
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_HEAD:
                 for (int i = 1; i < mPlankLogs.size(); i++) {
-                    int plankLogDay = Integer.parseInt(mPlankLogs.get(i).getDatetime().split(" ")[0].split("-")[2]);
+                    Calendar calendar = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
+                    calendar.setTime(new Date(mPlankLogs.get(i).getDatetimeMSec()));
+                    int plankLogDay = calendar.get(Calendar.DATE);
                     int orderOfWeek = daysOfWeek.indexOf(plankLogDay);
 
                     if (orderOfWeek > -1) {
@@ -170,7 +176,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 });
                 break;
             case Constants.RECYCLERVIEW_ADAPTER_VIEWTYPE.TYPE_BODY:
-                holder.mDatetimeTextView.setText(mPlankLogs.get(position).getDatetime());
+                holder.mDatetimeTextView.setText(new Date(mPlankLogs.get(position).getDatetimeMSec()).toString());
                 holder.mDurationTextView.setText(TimeUtils.mSecToTimeFormat(mPlankLogs.get(position).getDuration()));
                 holder.mLapCountTextView.setText(String.valueOf(mPlankLogs.get(position).getLapCount()));
                 holder.mMethodTextView.setText(mPlankLogs.get(position).getMethod());

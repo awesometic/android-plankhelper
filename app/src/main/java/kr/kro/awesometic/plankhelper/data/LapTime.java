@@ -62,15 +62,15 @@ public class LapTime {
         return mOrderNumber;
     }
 
-    public long getPassedTime() {
+    public long getPassedTimeMSec() {
         return mPassedTimeMSec;
     }
 
-    public long getLeftTime() {
+    public long getLeftTimeMSec() {
         return mLeftTimeMSec;
     }
 
-    public long getInterval() {
+    public long getIntervalMSec() {
         return mIntervalMSec;
     }
 }
