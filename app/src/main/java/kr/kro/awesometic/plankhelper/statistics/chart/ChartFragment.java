@@ -1,7 +1,6 @@
 package kr.kro.awesometic.plankhelper.statistics.chart;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,23 +15,11 @@ import android.widget.ViewAnimator;
 
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.util.Constants;
-import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.SliceValue;
-import lecho.lib.hellocharts.model.ValueShape;
-import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.LineChartView;
-import lecho.lib.hellocharts.view.PieChartView;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

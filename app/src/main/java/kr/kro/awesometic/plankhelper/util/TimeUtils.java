@@ -1,7 +1,5 @@
 package kr.kro.awesometic.plankhelper.util;
 
-import android.util.Log;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

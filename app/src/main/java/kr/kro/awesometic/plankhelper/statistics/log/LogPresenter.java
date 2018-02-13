@@ -2,17 +2,14 @@ package kr.kro.awesometic.plankhelper.statistics.log;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.data.LapTime;
 import kr.kro.awesometic.plankhelper.data.PlankLog;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsDataSource;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
-import kr.kro.awesometic.plankhelper.plank.stopwatch.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

@@ -14,7 +14,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.view.WindowManager;
 import android.widget.Toast;
 

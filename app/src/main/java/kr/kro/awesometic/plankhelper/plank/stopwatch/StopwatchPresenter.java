@@ -2,13 +2,8 @@ package kr.kro.awesometic.plankhelper.plank.stopwatch;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Locale;
 

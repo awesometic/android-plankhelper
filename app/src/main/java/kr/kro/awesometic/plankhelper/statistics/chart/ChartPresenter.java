@@ -1,7 +1,6 @@
 package kr.kro.awesometic.plankhelper.statistics.chart;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -10,11 +9,6 @@ import java.util.List;
 import kr.kro.awesometic.plankhelper.data.PlankLog;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsDataSource;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

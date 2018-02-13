@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +12,8 @@ import java.util.List;
 import kr.kro.awesometic.plankhelper.data.LapTime;
 import kr.kro.awesometic.plankhelper.data.PlankLog;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsDataSource;
-import kr.kro.awesometic.plankhelper.data.source.local.PlankLogsPersistentContract.PlankLogEntry;
 import kr.kro.awesometic.plankhelper.data.source.local.PlankLogsPersistentContract.LapTimeEntry;
+import kr.kro.awesometic.plankhelper.data.source.local.PlankLogsPersistentContract.PlankLogEntry;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

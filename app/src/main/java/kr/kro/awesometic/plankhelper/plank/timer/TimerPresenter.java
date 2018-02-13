@@ -2,13 +2,8 @@ package kr.kro.awesometic.plankhelper.plank.timer;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.data.LapTime;
@@ -17,7 +12,6 @@ import kr.kro.awesometic.plankhelper.data.source.PlankLogsDataSource;
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
 import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
-import kr.kro.awesometic.plankhelper.util.LogManager;
 import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
