@@ -14,6 +14,7 @@ ext {
     guavaVersion = '24.1-android'
     butterKnifeVersion = '8.8.1'
     dexterVersion = '4.2.0'
+    roomVersion = "1.0.0"
     // Test
     junitVersion = '4.12'
     mockitoVersion = '2.15.0'
