@@ -1,12 +1,44 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Define versions in a single place
+ext {
+    // SDK and tools
+    minSdkVersion = 14
+    targetSdkVersion = 26
+    compileSdkVersion = 26
+    buildToolsVersion = '27.0.3'
+
+    // App dependencies
+    // Common
+    supportLibraryVersion = '27.1.0'
+    constraintLayoutVersion = '1.1.0-beta6'
+    guavaVersion = '24.1-android'
+    butterKnifeVersion = '8.8.1'
+    dexterVersion = '4.2.0'
+    // Test
+    junitVersion = '4.12'
+    mockitoVersion = '2.15.0'
+    espressoVersion = '3.0.1'
+    // UI
+    materialViewPagerVersion = '1.2.3'
+    kenburnsViewVersion = '1.0.7'
+    materialTabStripVersion = '1.1.0'
+    glideVersion = '4.0.0'
+    materialCalendarViewVersion = '1.4.3'
+    materialDialogsVersion = '0.9.6.0'
+    advancedRecyclerViewVersion = '0.11.0'
+    helloChartVersion = '1.5.8'
+}
 
 buildscript {
-    ext.kotlin_version = '1.2.21'
+    ext.kotlin_version = '1.2.31'
+    ext.gradlePluginVersion = '3.1.0'
+
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "com.android.tools.build:gradle:$gradlePluginVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -17,6 +49,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        google()
     }
 }
 
