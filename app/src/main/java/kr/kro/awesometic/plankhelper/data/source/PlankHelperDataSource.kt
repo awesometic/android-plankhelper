@@ -5,9 +5,9 @@ import kr.kro.awesometic.plankhelper.data.Plank
 
 interface PlankHelperDataSource {
 
-    interface LoadPlankCallback {
+    interface LoadPlanksCallback {
 
-        fun onPlanksLoaded(plank: List<Plank>)
+        fun onPlanksLoaded(planks: List<Plank>)
 
         fun onDataNotAvailable()
     }
@@ -19,9 +19,9 @@ interface PlankHelperDataSource {
         fun onDataNotAvailable()
     }
 
-    interface LoadLapCallback {
+    interface LoadLapsCallback {
 
-        fun onLapsLoaded(lap: List<Lap>)
+        fun onLapsLoaded(laps: List<Lap>)
 
         fun onDataNotAvailable()
     }
@@ -33,13 +33,13 @@ interface PlankHelperDataSource {
         fun onDataNotAvailable()
     }
 
-    fun getPlanks(callback: LoadPlankCallback)
+    fun getPlanks(callback: LoadPlanksCallback)
 
     fun getPlank(entryId: String, callback: GetPlankCallback)
 
-    fun getLaps(callback: LoadLapCallback)
+    fun getLaps(callback: LoadLapsCallback)
 
-    fun getLapsByPlankId(plankId: String, callback: LoadLapCallback)
+    fun getLapsByPlankId(plankId: String, callback: LoadLapsCallback)
 
     fun savePlank(plank: Plank)
 
