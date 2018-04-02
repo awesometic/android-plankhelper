@@ -6,7 +6,7 @@ import kr.kro.awesometic.plankhelper.data.source.PlankHelperDataSource
 
 object PlankHelperRemoteDataSource : PlankHelperDataSource {
 
-    override fun getPlanks(callback: PlankHelperDataSource.LoadPlankCallback) {
+    override fun getPlanks(callback: PlankHelperDataSource.LoadPlanksCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -14,11 +14,11 @@ object PlankHelperRemoteDataSource : PlankHelperDataSource {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getLaps(callback: PlankHelperDataSource.LoadLapCallback) {
+    override fun getLaps(callback: PlankHelperDataSource.LoadLapsCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getLapsByPlankId(plankId: String, callback: PlankHelperDataSource.LoadLapCallback) {
+    override fun getLapsByPlankId(plankId: String, callback: PlankHelperDataSource.LoadLapsCallback) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
