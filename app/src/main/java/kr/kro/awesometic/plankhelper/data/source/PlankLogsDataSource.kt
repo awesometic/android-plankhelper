@@ -1,11 +1,8 @@
 package kr.kro.awesometic.plankhelper.data.source
-
+/*
 import kr.kro.awesometic.plankhelper.data.LapTime
 import kr.kro.awesometic.plankhelper.data.PlankLog
 
-/**
- * Created by Awesometic on 2017-04-16.
- */
 
 interface PlankLogsDataSource {
 
@@ -56,3 +53,4 @@ interface PlankLogsDataSource {
     // 해당 PlankLog의 모든 LapTime을 지움
     fun deleteAllLapTimes(plankLogId: String)
 }
+*/

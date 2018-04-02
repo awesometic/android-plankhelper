@@ -1,5 +1,5 @@
 package kr.kro.awesometic.plankhelper.data.source
-
+/*
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
@@ -8,9 +8,6 @@ import kr.kro.awesometic.plankhelper.data.PlankLog
 
 import com.google.common.base.Preconditions.checkNotNull
 
-/**
- * Created by Awesometic on 2017-04-16.
- */
 
 class PlankLogsRepository(plankLogsLocalDataSource: PlankLogsDataSource) : PlankLogsDataSource {
     private val mPlankLogsLocalDataSource: PlankLogsDataSource
@@ -176,3 +173,4 @@ class PlankLogsRepository(plankLogsLocalDataSource: PlankLogsDataSource) : Plank
         }
     }
 }
+*/

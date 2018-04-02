@@ -1,5 +1,6 @@
 package kr.kro.awesometic.plankhelper.data.source.local
 
+/*
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -15,9 +16,6 @@ import kr.kro.awesometic.plankhelper.data.source.local.PlankLogsPersistentContra
 
 import com.google.common.base.Preconditions.checkNotNull
 
-/**
- * Created by Awesometic on 2017-04-15.
- */
 
 class PlankLogsLocalDataSource private constructor(context: Context) : PlankLogsDataSource {
     private val mDbHelper: PlankLogsDbHelper
@@ -221,3 +219,4 @@ class PlankLogsLocalDataSource private constructor(context: Context) : PlankLogs
         }
     }
 }
+*/
