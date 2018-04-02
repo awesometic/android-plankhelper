@@ -6,8 +6,8 @@ import kr.kro.awesometic.plankhelper.data.source.local.PlankHelperLocalDataSourc
 import kr.kro.awesometic.plankhelper.data.source.remote.PlankHelperRemoteDataSource
 
 class PlankHelperRepository(
-        val plankHelperLocalDataSource: PlankHelperLocalDataSource,
-        val plankHelperRemoteDataSource: PlankHelperRemoteDataSource
+        val plankHelperRemoteDataSource: PlankHelperRemoteDataSource,
+        val plankHelperLocalDataSource: PlankHelperLocalDataSource
 ) : PlankHelperDataSource {
 
     var cachedPlanks: LinkedHashMap<String, Plank> = LinkedHashMap()
@@ -148,5 +148,20 @@ class PlankHelperRepository(
 
         cachedLaps.put(cachedLap.entryId, cachedLap)
         perform(cachedLap)
+    }
+
+    companion object {
+
+        private var INSTANCE: PlankHelperRepository? = null
+
+        @JvmStatic fun getInstance(plankHelperRemoteDataSource: PlankHelperRemoteDataSource,
+                                   plankHelperLocalDataSource: PlankHelperLocalDataSource) : PlankHelperRepository {
+            return INSTANCE ?: PlankHelperRepository(plankHelperRemoteDataSource, plankHelperLocalDataSource)
+                    .apply { INSTANCE = this }
+        }
+
+        @JvmStatic fun destroyInstance() {
+            INSTANCE = null
+        }
     }
 }
