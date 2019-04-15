@@ -1,10 +1,10 @@
 package kr.kro.awesometic.plankhelper.settings;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import kr.kro.awesometic.plankhelper.data.source.PlankLogsRepository;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static androidx.core.util.Preconditions.checkNotNull;
 
 /**
  * Created by Awesometic on 2017-04-17.

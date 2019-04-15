@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/statistics_calendar_cardview_body"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_margin="10dp"
         card_view:cardCornerRadius="2dp"
         card_view:cardElevation="2dp">
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

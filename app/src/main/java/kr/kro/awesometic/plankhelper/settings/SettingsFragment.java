@@ -1,10 +1,10 @@
 package kr.kro.awesometic.plankhelper.settings;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import kr.kro.awesometic.plankhelper.R;
 import kr.kro.awesometic.plankhelper.settings.custom.NumberPickerPreference;
@@ -12,7 +12,7 @@ import kr.kro.awesometic.plankhelper.settings.custom.NumberPickerPreferenceDialo
 import kr.kro.awesometic.plankhelper.settings.custom.TimePreference;
 import kr.kro.awesometic.plankhelper.settings.custom.TimePreferenceDialogFragment;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static androidx.core.util.Preconditions.checkNotNull;
 
 /**
  * Created by Awesometic on 2017-04-17.

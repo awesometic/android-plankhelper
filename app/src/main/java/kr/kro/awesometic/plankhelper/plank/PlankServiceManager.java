@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 
 import kr.kro.awesometic.plankhelper.plank.stopwatch.StopwatchPresenter;
 import kr.kro.awesometic.plankhelper.plank.timer.TimerPresenter;

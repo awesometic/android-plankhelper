@@ -1,6 +1,6 @@
 package kr.kro.awesometic.plankhelper;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by Awesometic on 2017-04-15.

@@ -12,6 +12,10 @@ public class Constants {
         int FOREGROUND_SERVICE = 12071;
     }
 
+    public interface NOTIFICATION_CHANNEL {
+        String SERVICE_CHANNEL_NAME = "PlankHelperService";
+    }
+
     public interface BROADCAST_ACTION {
         String NOTIFICATION_READY = "kr.kro.awesometic.plankhelper.NOTI_ACTION_NOTIFICATION_READY";
         String APP_EXIT = "kr.kro.awesometic.plankhelper.NOTI_ACTION_APP_EXIT";

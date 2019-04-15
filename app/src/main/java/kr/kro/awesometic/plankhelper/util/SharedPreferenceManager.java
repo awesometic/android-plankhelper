@@ -2,7 +2,7 @@ package kr.kro.awesometic.plankhelper.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v7.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import kr.kro.awesometic.plankhelper.R;
 

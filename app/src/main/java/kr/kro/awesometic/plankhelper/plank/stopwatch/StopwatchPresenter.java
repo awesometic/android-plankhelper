@@ -2,7 +2,7 @@ package kr.kro.awesometic.plankhelper.plank.stopwatch;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.widget.Toast;
 
 import java.util.Locale;
@@ -16,7 +16,7 @@ import kr.kro.awesometic.plankhelper.plank.LapTimeListViewAdapter;
 import kr.kro.awesometic.plankhelper.util.Constants;
 import kr.kro.awesometic.plankhelper.util.TimeUtils;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static androidx.core.util.Preconditions.checkNotNull;
 
 /**
  * Created by Awesometic on 2017-04-19.

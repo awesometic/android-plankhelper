@@ -1,6 +1,6 @@
 package kr.kro.awesometic.plankhelper.data.source;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.List;
 
